@@ -40,22 +40,22 @@ void Token::setToken(std::string str)
   token = str;
 }
 
-long long getLine()
+long long Token::getLine()
 {
   return line;
 }
 
-void setLine(long long val)
+void Token::setLine(long long val)
 {
   line = val;
 }
 
-long long getCol()
+long long Token::getCol()
 {
   return col;
 }
 
-void setCol(long long val)
+void Token::setCol(long long val)
 {
   col = val;
 }

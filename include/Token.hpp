@@ -1,5 +1,5 @@
-#ifndef Token_HPP
-#define Token_HPP
+#ifndef _Token_HPP
+#define _Token_HPP
 
 /* Tokens are stored as strings in a class Token, where it is
    bundled along with a TokenType */

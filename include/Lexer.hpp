@@ -1,7 +1,7 @@
-#ifndef Lexer_HPP
-#define Lexer_HPP
+#ifndef _Lexer_HPP
+#define _Lexer_HPP
 
-#include <istream>
+#include <iostream>
 #include <vector>
 #include <string>
 #include "Token.hpp"
@@ -18,7 +18,8 @@ public:
   Lexer(const Lexer& lexer);
   Lexer& operator=(Lexer& lexer);
   void clear();
-  TokenIterator getTokens();
+  void getTokens(TokenIterator& begin, TokenIterator& end);
+  void printTokens(std::ostream& stream);
   void lex(std::istream& stream);
 };
 

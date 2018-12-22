@@ -1,6 +1,6 @@
 /* Implementation of the lexer -- parses according to the rules in Lexer.md */
 
-#include <istream>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <cctype>
@@ -23,9 +23,47 @@ void Lexer::clear()
   tokens.clear();
 }
 
-TokenIterator Lexer::getTokens()
+void Lexer::getTokens(TokenIterator& begin, TokenIterator& end)
 {
-  return tokens.begin();
+  begin = tokens.begin();
+  end = tokens.end();
+}
+
+// Prints out tokens
+void Lexer::printTokens(std::ostream& stream)
+{
+  std::string tokenType;
+  std::cout.setf(std::ios_base::left, std::ios_base::adjustfield);
+  for (Token tok : tokens)
+  {
+    stream << "{";
+    switch (tok.getType())
+    {
+    case PAREN:
+      tokenType = "PAREN";
+      break;
+    case QUOTE:
+      tokenType = "QUOTE";
+      break;
+    case HASH:
+      tokenType = "HASH";
+      break;
+    case IDENTIFIER:
+      tokenType = "IDENTIFIER";
+      break;
+    case NUMBER:
+      tokenType = "NUMBER";
+      break;
+    case STRING:
+      tokenType = "STRING";
+      break;
+    default:
+      tokenType = "UNSPECIFIED";
+    }
+    stream << " Token Type: " << tokenType << ";";
+    stream << " Token Value: " << tok.getToken() << " }";
+    stream << std::endl;
+  }
 }
 
 
@@ -78,7 +116,7 @@ void Lexer::lex(std::istream& stream)
     {
       tok = lexSpecial(stream, line, col);
     }
-    else if (isdigit(ch))
+    else if (isdigit(ch) || ch == '-')
     {
       tok = lexNumber(stream, line, col);
     }
@@ -89,6 +127,7 @@ void Lexer::lex(std::istream& stream)
     else if (isspace(ch))
     {
       skipWhiteSpace(stream, line, col);
+      continue;
     }
     // This scheme will allow some really absurd tokens
     // (pun intended in hindsight)
@@ -177,7 +216,7 @@ Token lexNumber(std::istream& stream, long long& line, long long &col)
   std::string tokenString;
   char ch;
   ch = stream.peek();
-  if (!isdigit(ch))
+  if (!isdigit(ch) && ch != '-')
   {
     throw LexerException();
   }
@@ -279,7 +318,7 @@ void skipComment(std::istream& stream, long long& line, long long &col)
 }
 
 // Skips multi-line comment until comment end delimiter or EOF 
-void skipMulilineComment(std::istream& stream, long long& line, long long &col)
+void skipMultilineComment(std::istream& stream, long long& line, long long &col)
 {
   char ch;
   ch = stream.peek();
@@ -290,7 +329,6 @@ void skipMulilineComment(std::istream& stream, long long& line, long long &col)
     {
       line++;
       col = 0;
-      break;
     }
     else
       col++;

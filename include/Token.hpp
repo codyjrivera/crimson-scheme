@@ -15,7 +15,7 @@ enum TokenType
   BOOLEAN,
   NUMBER,
   STRING,
-  NONE
+  END
 };
 
 

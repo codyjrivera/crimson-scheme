@@ -10,7 +10,7 @@ CPPFLAGS = -Wall -Wextra -g -std=$(CPPSTD)
 INCLUDEDIR = ../include
 TESTDIR = ../tests
 
-OBJFILES = main.o Token.o
+OBJFILES = main.o Token.o Lexer.o
 
 # Compilation Rules
 

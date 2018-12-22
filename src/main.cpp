@@ -16,17 +16,15 @@
 #include "Lexer.hpp"
 #include "Token.hpp"
 
-int main(int argc, char** argv)
+int main()
 {
   Lexer lex;
-  std::string infile;
-  if (argc != 2)
-    return 1;
-  infile = argv[1];
-  std::ifstream file(infile);
-  if (!file.is_open())
-    return 1;
-  lex.lex(file);
-  lex.printTokens(std::cout);
+  Token tok;
+  tok = lex.lexToken();
+  while (tok.getType() != END)
+  {
+    std::cout << tok.getValue() << std::endl;
+    tok = lex.lexToken();
+  }
   return 0;
 }

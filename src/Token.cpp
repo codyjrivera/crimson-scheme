@@ -4,18 +4,26 @@
 #include "Token.hpp"
 
 
-// Placeholder constructor and destructor
+// Constructors and destructors
 Token::Token(){}
+
+Token::Token(TokenType type, std::string val, long long l, long long c)
+  : tokenType(type),
+    value(val),
+    line(l),
+    col(c) {}
+
 Token::~Token(){}
 
 // Copy and Assignment Constructors
-Token::Token(const Token& tok) : tokenType(tok.tokenType),
-                                 token(tok.token) {}
+Token::Token(const Token& tok)
+  : tokenType(tok.tokenType),
+    value(tok.value) {}
 
 Token& Token::operator=(const Token& tok)
 {
   tokenType = tok.tokenType;
-  token = tok.token;
+  value = tok.value;
   return *this;
 }
 
@@ -30,14 +38,14 @@ void Token::setType(TokenType type)
   tokenType = type;
 }
 
-std::string Token::getToken()
+std::string Token::getValue()
 {
-  return token;
+  return value;
 }
 
-void Token::setToken(std::string str)
+void Token::setValue(std::string str)
 {
-  token = str;
+  value = str;
 }
 
 long long Token::getLine()

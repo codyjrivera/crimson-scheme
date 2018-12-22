@@ -10,7 +10,7 @@ CPPFLAGS = -Wall -Wextra -g -std=$(CPPSTD)
 INCLUDEDIR = ../include
 TESTDIR = ../tests
 
-OBJFILES = main.o Token.o Lexer.o
+OBJFILES = main.o Token.o
 
 # Compilation Rules
 
@@ -21,7 +21,7 @@ cri-scm : $(OBJFILES)
 
 # Source File Compile
 %.o : %.cpp
-	$(CPP) $(CPPFLAGS) -c $^ -I $(INCLUDEDIR)
+	$(CPP) -c $(CPPFLAGS) $^ -I $(INCLUDEDIR)
 
 
 # Cleanup

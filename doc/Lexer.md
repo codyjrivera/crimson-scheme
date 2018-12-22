@@ -7,7 +7,7 @@ All text after a "#|" and before a "|#" shall be ignored.
 ## Tokens
 
 ### Single Character Tokens
-'(', ')', '#' '''
+'(', ')', '#', '''
 These characters shall be parsed as their own tokens.
 
 ### Symbol Tokens
@@ -22,8 +22,8 @@ number token.
 Any token starting with '"', and ending with '"', shall be parsed as
 a string token.
 
+### Boolean Token
+"#t" and "#f" will be parsed as boolean tokens.
+
 #### Escape Sequences
 \\" shall be parsed as ", while \\\\" shall be parsed as \\".
-
-
-## TODO -- Formal Grammar

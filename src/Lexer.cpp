@@ -7,14 +7,10 @@
 #include "Lexer.hpp"
 #include "Token.hpp"
 
-// Lexer Class Essential Functions
-Lexer::Lexer() {}
 
-Lexer::~Lexer() {}
-
-
-// Lexer Code
-namespace {
+/* Helper Functions */
+namespace
+{
   bool isSpecial(char ch);
   Token lexSpecial(std::istream& stream, long long& line, long long &col);
   Token lexIdentifier(std::istream& stream, long long& line, long long &col);
@@ -23,11 +19,124 @@ namespace {
   void skipWhiteSpace(std::istream&stream, long long& line, long long &col);
   void skipComment(std::istream& stream, long long& line, long long &col);
   void skipMultilineComment(std::istream& stream, long long& line, long long &col);
+}
 
 
-  /* Implementation of functions (NOTE: Guaranteed that at least one character
-     can be parsed) */
 
+// Lexer Class Essential Functions
+Lexer::Lexer()
+  : inStream(&std::cin),
+    line(1),
+    col(0) {}
+
+Lexer::Lexer(std::istream& stream)
+  : inStream(&stream),
+    line(1),
+    col(0) {}
+
+Lexer::~Lexer() {}
+
+Lexer::Lexer(const Lexer& lex)
+  : inStream(lex.inStream),
+    line(lex.line),
+    col(lex.col) {}
+
+Lexer& Lexer::operator=(const Lexer& lex)
+{
+  inStream = lex.inStream;
+  line = lex.line;
+  col = lex.col;
+  return *this;
+}
+
+void Lexer::setStream(std::istream& stream)
+{
+  inStream = &stream;
+}
+
+void Lexer::resetPosition()
+{
+  line = 1;
+  col = 0;
+}
+
+long long Lexer::getLine()
+{
+  return line;
+}
+
+long long Lexer::getCol()
+{
+  return col;
+}
+
+// Lexer driver
+Token Lexer::nextToken()
+{
+  char ch;
+  ch = (*inStream).peek();
+  while (!(*inStream).eof())
+  {
+    // Examines the token and calls the appropriate function to lex
+    // or skip whitespace
+    if (ch == ';')
+    {
+      skipComment((*inStream), line, col);
+    }
+    // Handles Booleans, Multiline Comments, and other hashed elements
+    else if (ch == '#')
+    {
+      ch = (*inStream).get();
+      col++;
+      ch = (*inStream).peek();
+      if (ch == '|')
+      {
+        skipMultilineComment((*inStream), line, col);
+      }
+      else if (ch == 't' || ch == 'f')
+      {
+        ch = (*inStream).get();
+        if (ch == 't')
+          return Token(BOOLEAN, "#t", line, col);
+        else
+          return Token(BOOLEAN, "#f", line, col);
+      }
+      else
+      {
+        return Token(HASH, "#", line, col);
+      }
+    }
+    else if (ch == '(' || ch == ')' || ch == '\'')
+    {
+      return lexSpecial((*inStream), line, col);
+    }
+    else if (isdigit(ch) || ch == '-')
+    {
+      return lexNumber((*inStream), line, col);
+    }
+    else if (ch == '"')
+    {
+      return lexString((*inStream), line, col);
+    }
+    else if (isspace(ch))
+    {
+      skipWhiteSpace((*inStream), line, col);
+    }
+    // This scheme will allow some really absurd tokens
+    // (pun intended in hindsight)
+    else
+    {
+      return lexIdentifier((*inStream), line, col);
+    }
+    ch = (*inStream).peek();
+  }
+  return Token(END, "", line, col);
+}
+
+
+// Lexer Auxilliary Code
+namespace
+{
   // Determines the type of single character token and creates one
   Token lexSpecial(std::istream& stream, long long& line, long long &col)
   {
@@ -91,7 +200,7 @@ namespace {
     std::string tokenString;
     char ch;
     ch = stream.peek();
-    if (!isdigit(ch) && ch != '-')
+    if (!isdigit(ch) && ch != '-' && ch != '.')
     {
       return Token(END, "", line, col);
     }
@@ -117,9 +226,12 @@ namespace {
       return Token(END, "", line, col);
     }
     ch = stream.peek();
-    while (!(stream.eof() || ch == '"'))
+    while (!(stream.eof()))
     {
       ch = stream.get();
+      // Checks for end of quotation
+      if (ch == '"')
+        break;
       // Includes Newlines
       if (ch == '\n')
       {
@@ -212,66 +324,5 @@ namespace {
   }
 }
 
-Token Lexer::lexToken()
-{
-  long long line = 1, col = 1;
-  char ch;
-  ch = std::cin.peek();
-  while (!std::cin.eof())
-  {
-    // Examines the token and calls the appropriate function to lex
-    // or skip whitespace
-    if (ch == ';')
-    {
-      skipComment(std::cin, line, col);
-    }
-    // Handles Booleans, Multiline Comments, and other hashed elements
-    else if (ch == '#')
-    {
-      ch = std::cin.get();
-      col++;
-      ch = std::cin.peek();
-      if (ch == '|')
-      {
-        skipMultilineComment(std::cin, line, col);
-      }
-      else if (ch == 't' || ch == 'f')
-      {
-        ch = std::cin.get();
-        if (ch == 't')
-          return Token(BOOLEAN, "#t", line, col);
-        else
-          return Token(BOOLEAN, "#f", line, col);
-      }
-      else
-      {
-        return Token(HASH, "#", line, col);
-      }
-    }
-    else if (ch == '(' || ch == ')' || ch == '\'')
-    {
-      return lexSpecial(std::cin, line, col);
-    }
-    else if (isdigit(ch) || ch == '-')
-    {
-      return lexNumber(std::cin, line, col);
-    }
-    else if (ch == '"')
-    {
-      return lexString(std::cin, line, col);
-    }
-    else if (isspace(ch))
-    {
-      skipWhiteSpace(std::cin, line, col);
-    }
-    // This scheme will allow some really absurd tokens
-    // (pun intended in hindsight)
-    else
-    {
-      return lexIdentifier(std::cin, line, col);
-    }
-    ch = std::cin.peek();
-  }
-  return Token(END, "", line, col);
-}
+
 

@@ -4,6 +4,7 @@
 /* Tokens are stored as strings in a class Token, where it is
    bundled along with a TokenType */
 
+#include <iostream>
 #include <string>
 
 enum TokenType
@@ -41,6 +42,7 @@ public:
   void setLine(long long val);
   long long getCol();
   void setCol(long long val);
+  void printToken(std::ostream& stream);
 };
 
 

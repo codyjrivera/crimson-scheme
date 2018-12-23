@@ -18,12 +18,16 @@ Token::~Token(){}
 // Copy and Assignment Constructors
 Token::Token(const Token& tok)
   : tokenType(tok.tokenType),
-    value(tok.value) {}
+    value(tok.value),
+    line(tok.line),
+    col(tok.col) {}
 
 Token& Token::operator=(const Token& tok)
 {
   tokenType = tok.tokenType;
   value = tok.value;
+  line = tok.line;
+  col = tok.col;
   return *this;
 }
 
@@ -66,4 +70,40 @@ long long Token::getCol()
 void Token::setCol(long long val)
 {
   col = val;
+}
+
+void Token::printToken(std::ostream& stream)
+{
+  std::string typeString;
+  switch (tokenType)
+  {
+  case PAREN:
+    typeString = "PAREN";
+    break;
+  case QUOTE:
+    typeString = "QUOTE";
+    break;
+  case HASH:
+    typeString = "HASH";
+    break;
+  case IDENTIFIER:
+    typeString = "IDENTIFIER";
+    break;
+  case BOOLEAN:
+    typeString = "BOOLEAN";
+    break;
+  case NUMBER:
+    typeString = "NUMBER";
+    break;
+  case STRING:
+    typeString = "STRING";
+    break;
+  case END:
+    typeString = "END";
+    break;
+  default:
+    typeString = "UNSPECIFIED";
+  }
+  stream << "{ " << typeString << ": " << value << " }" << std::endl;
+  stream << "{ line: " << line << " col: " << col << " }" << std::endl;
 }

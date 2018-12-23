@@ -10,6 +10,8 @@ CPPFLAGS = -Wall -Wextra -g -std=$(CPPSTD)
 INCLUDEDIR = ../include
 TESTDIR = ../tests
 
+TESTS = simple.test sort.test
+
 OBJFILES = main.o Token.o Lexer.o
 
 # Compilation Rules
@@ -18,6 +20,11 @@ OBJFILES = main.o Token.o Lexer.o
 cri-scm : $(OBJFILES)
 	$(CPP) $(CPPFLAGS) $^ -o $@
 
+
+test : cri-scm $(TESTS)
+
+%.test : $(TESTDIR)/%.scm
+	./cri-scm < $^
 
 # Source File Compile
 %.o : %.cpp

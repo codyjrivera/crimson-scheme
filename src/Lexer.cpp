@@ -110,7 +110,7 @@ Token Lexer::nextToken()
     {
       return lexSpecial((*inStream), line, col);
     }
-    else if (isdigit(ch) || ch == '-')
+    else if (isdigit(ch) || ch == '-' || ch == '+' || ch == '.')
     {
       return lexNumber((*inStream), line, col);
     }
@@ -200,10 +200,14 @@ namespace
     std::string tokenString;
     char ch;
     ch = stream.peek();
-    if (!isdigit(ch) && ch != '-' && ch != '.')
+    if (!isdigit(ch) && ch != '-' && ch != '.' && ch != '+')
     {
       return Token(END, "", line, col);
     }
+    ch = stream.get();
+    col++;
+    tokenString.push_back(ch);
+    ch = stream.peek();
     while (!(stream.eof() || isspace(ch) || isSpecial(ch)))
     {
       ch = stream.get();
@@ -211,6 +215,10 @@ namespace
       tokenString.push_back(ch);
       ch = stream.peek();
     }
+    /* Handles + and - primitives */
+    if (tokenString.length() == 1)
+      if (tokenString[0] == '-' || tokenString[0] == '+')
+        return Token(IDENTIFIER, tokenString, line, col);
     return Token(type, tokenString, line, col);
   }
 

@@ -27,25 +27,31 @@ namespace
 Lexer::Lexer()
   : inStream(&std::cin),
     line(1),
-    col(0) {}
+    col(0),
+    saveToken(false) {}
 
 Lexer::Lexer(std::istream& stream)
   : inStream(&stream),
     line(1),
-    col(0) {}
+    col(0),
+    saveToken(false) {}
 
 Lexer::~Lexer() {}
 
 Lexer::Lexer(const Lexer& lex)
   : inStream(lex.inStream),
     line(lex.line),
-    col(lex.col) {}
+    col(lex.col),
+    nextToken(lex.nextToken),
+    saveToken(lex.saveToken) {}
 
 Lexer& Lexer::operator=(const Lexer& lex)
 {
   inStream = lex.inStream;
   line = lex.line;
   col = lex.col;
+  nextToken = lex.nextToken;
+  saveToken = lex.saveToken;
   return *this;
 }
 
@@ -70,12 +76,31 @@ long long Lexer::getCol()
   return col;
 }
 
+Token Lexer::peek()
+{
+  if (saveToken)
+    return nextToken;
+  nextToken = lexToken();
+  saveToken = true;
+  return nextToken;
+}
+
+Token Lexer::next()
+{
+  if (saveToken)
+  {
+    saveToken = false;
+    return nextToken;
+  }
+  return lexToken();
+}
+
 // Lexer driver
-Token Lexer::nextToken()
+Token Lexer::lexToken()
 {
   char ch;
-  ch = (*inStream).peek();
-  while (!(*inStream).eof())
+  ch = inStream->peek();
+  while (!inStream->eof())
   {
     // Examines the token and calls the appropriate function to lex
     // or skip whitespace
@@ -86,16 +111,16 @@ Token Lexer::nextToken()
     // Handles Booleans, Multiline Comments, and other hashed elements
     else if (ch == '#')
     {
-      ch = (*inStream).get();
+      ch = inStream->get();
       col++;
-      ch = (*inStream).peek();
+      ch = inStream->peek();
       if (ch == '|')
       {
         skipMultilineComment((*inStream), line, col);
       }
       else if (ch == 't' || ch == 'f')
       {
-        ch = (*inStream).get();
+        ch = inStream->get();
         if (ch == 't')
           return Token(BOOLEAN, "#t", line, col);
         else
@@ -128,7 +153,7 @@ Token Lexer::nextToken()
     {
       return lexIdentifier((*inStream), line, col);
     }
-    ch = (*inStream).peek();
+    ch = inStream->peek();
   }
   return Token(END, "", line, col);
 }

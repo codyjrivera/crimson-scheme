@@ -12,6 +12,10 @@ private:
   std::istream* inStream;
   long long line;
   long long col;
+
+  Token nextToken;
+  bool saveToken;
+  Token lexToken();
   
 public:
   Lexer();
@@ -21,7 +25,8 @@ public:
   Lexer& operator=(const Lexer& lex);
   void setStream(std::istream& stream);
   void resetPosition();
-  Token nextToken();
+  Token peek();
+  Token next();
   long long getLine();
   long long getCol();
 };

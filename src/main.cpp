@@ -20,11 +20,11 @@ int main()
 {
   Lexer lex;
   Token tok;
-  tok = lex.nextToken();
+  tok = lex.next();
   while (tok.getType() != END)
   {
     tok.printToken(std::cout);
-    tok = lex.nextToken();
+    tok = lex.next();
   }
   tok.printToken(std::cout);
   return 0;

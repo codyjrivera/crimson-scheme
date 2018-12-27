@@ -11,8 +11,8 @@ Any variable beginning with '&' will be a reference variable;
 programs can bind other variables to it as well as pass it
 to other functions.
 
-Example:
-(define a 1)
+Example:  
+(define a 1)  
 ((lambda (&x) (set! x (+ x 1))) a)
 a
 
@@ -24,11 +24,11 @@ Any variable beginning with $ will represent a thunk;
 any valid expression can be bound to $, and will only be evaluated
 if the variable has to be evaluated.
 
-Example:
-(define a 2)
-(define b (- 2 a))
-(set! a 1)
-((lambda ($x) (/ 1 $x)) b)
+Example:  
+(define a 2)  
+(define b (- 2 a))  
+(set! a 1)  
+((lambda ($x) (/ 1 $x)) b)  
 
 => 1
 

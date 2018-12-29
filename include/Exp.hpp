@@ -42,7 +42,7 @@ public:
   void setLine(long long val);
   long long getCol();
   void setCol(long long val);
-  void print(std::ostream& stream);
+  void printToken(std::ostream& stream);
 };
 
 

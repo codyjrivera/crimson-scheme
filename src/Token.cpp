@@ -72,7 +72,7 @@ void Token::setCol(long long val)
   col = val;
 }
 
-void Token::printToken(std::ostream& stream)
+void Token::print(std::ostream& stream)
 {
   std::string typeString;
   switch (tokenType)

@@ -23,9 +23,9 @@ int main()
   tok = lex.next();
   while (tok.getType() != END)
   {
-    tok.printToken(std::cout);
+    tok.print(std::cout);
     tok = lex.next();
   }
-  tok.printToken(std::cout);
+  tok.print(std::cout);
   return 0;
 }

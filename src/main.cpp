@@ -21,7 +21,7 @@ int main()
   Lexer lex;
   Token tok;
   tok = lex.next();
-  while (tok.getType() != END)
+  while (tok.getType() != TokenType::END)
   {
     tok.print(std::cout);
     tok = lex.next();

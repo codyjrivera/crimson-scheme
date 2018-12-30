@@ -43,16 +43,20 @@ public:
   // Most operations virtual, as subclasses have variety of behaviors 
   Exp();
   virtual ~Exp();
-  Exp(const Exp& tok);
-  Exp& operator=(const Exp& tok);
+  Exp(const Exp& exp);
+  Exp& operator=(const Exp& exp);
+  virtual std::unique_ptr<Exp> clone(const Exp& exp);
   // For Error Reporting, in superclass because behavior is the same
   long long getLine();
-  void setLine(long long val);
+  void setLine(long long l);
   long long getCol();
-  void setCol(long long val);
+  void setCol(long long c);
   // Core functions of evaluator
   virtual ExpType getType();
   virtual Exp& eval() = 0;
+  // Select brings unevaled code down a few stack levels to preserve
+  // proper tail calls
+  virtual Exp& select() = 0;
   virtual void print(std::ostream& stream) = 0;
   virtual void applyProduction(Lexer& lexer) = 0;
   std::unique_ptr<Exp> parse(Lexer& lexer);
@@ -78,6 +82,10 @@ public:
   void print(std::ostream& stream);
 };
 
+
+class Visitor
+{
+};
 
 
 #endif

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <string>
 
-enum TokenType
+enum class TokenType
 {
   PAREN,
   QUOTE,

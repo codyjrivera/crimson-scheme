@@ -122,13 +122,13 @@ Token Lexer::lexToken()
       {
         ch = inStream->get();
         if (ch == 't')
-          return Token(BOOLEAN, "#t", line, col);
+          return Token(TokenType::BOOLEAN, "#t", line, col);
         else
-          return Token(BOOLEAN, "#f", line, col);
+          return Token(TokenType::BOOLEAN, "#f", line, col);
       }
       else
       {
-        return Token(HASH, "#", line, col);
+        return Token(TokenType::HASH, "#", line, col);
       }
     }
     else if (ch == '(' || ch == ')' || ch == '\'')
@@ -155,7 +155,7 @@ Token Lexer::lexToken()
     }
     ch = inStream->peek();
   }
-  return Token(END, "", line, col);
+  return Token(TokenType::END, "", line, col);
 }
 
 
@@ -176,13 +176,13 @@ namespace
     {
     case '(':
     case ')':
-      type = PAREN;
+      type = TokenType::PAREN;
       break;
     case '\'':
-      type = QUOTE;
+      type = TokenType::QUOTE;
       break;
     default:
-      return Token(END, "", line, col);
+      return Token(TokenType::END, "", line, col);
     }
     tokenString.push_back(ch);
     return Token(type, tokenString, line, col);
@@ -201,7 +201,7 @@ namespace
   // Lexes the identifier until invalid characters show up
   Token lexIdentifier(std::istream& stream, long long& line, long long &col)
   {
-    TokenType type = IDENTIFIER;
+    TokenType type = TokenType::IDENTIFIER;
     std::string tokenString;
     char ch;
     while (true)
@@ -221,13 +221,13 @@ namespace
   // the rest of the number until an invalid character shows up
   Token lexNumber(std::istream& stream, long long& line, long long &col)
   {
-    TokenType type = NUMBER;
+    TokenType type = TokenType::NUMBER;
     std::string tokenString;
     char ch;
     ch = stream.peek();
     if (!isdigit(ch) && ch != '-' && ch != '.' && ch != '+')
     {
-      return Token(END, "", line, col);
+      return Token(TokenType::END, "", line, col);
     }
     ch = stream.get();
     col++;
@@ -243,20 +243,20 @@ namespace
     /* Handles + and - primitives */
     if (tokenString.length() == 1)
       if (tokenString[0] == '-' || tokenString[0] == '+')
-        return Token(IDENTIFIER, tokenString, line, col);
+        return Token(TokenType::IDENTIFIER, tokenString, line, col);
     return Token(type, tokenString, line, col);
   }
 
 
   Token lexString(std::istream& stream, long long& line, long long &col)
   {
-    TokenType type = STRING;
+    TokenType type = TokenType::STRING;
     std::string tokenString;
     char ch;
     ch = stream.get();
     if (ch != '"')
     {
-      return Token(END, "", line, col);
+      return Token(TokenType::END, "", line, col);
     }
     ch = stream.peek();
     while (!(stream.eof()))

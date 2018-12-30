@@ -1,49 +1,83 @@
-#ifndef _Token_HPP
-#define _Token_HPP
-
-/* Tokens are stored as strings in a class Token, where it is
-   bundled along with a TokenType */
+#ifndef _Exp_HPP
+#define _Exp_HPP
 
 #include <iostream>
 #include <string>
+#include <memory>
+#include <exception>
+#include "Lexer.hpp"
+#include "Error.hpp"
 
-enum TokenType
+enum class ExpType
 {
-  PAREN,
-  QUOTE,
-  HASH,
-  IDENTIFIER,
+  TOP,
+  // Data Expressions
   BOOLEAN,
-  NUMBER,
+  INTEGER,
+  REAL,
+  SYMBOL,
   STRING,
-  END
+  CONS,
+  // Control Expressions
+  DEFINE,
+  ASSIGN,
+  VARIABLE,
+  LAMBDA,
+  PROCEDURE,
+  ENVIRONMENT,
+  BEGIN,
+  IF,
+  THUNK,
+  NONE
 };
 
 
-class Token
+// Needs to be forward declared
+class Visitor;
+
+class Exp
 {
 private:
-  TokenType tokenType;
-  std::string value;
   long long line, col;
 public:
-  // Essential member functions
-  Token();
-  Token(TokenType type, std::string val, long long l, long long c);
-  ~Token();
-  Token(const Token& tok);
-  Token& operator=(const Token& tok);
-  // Getters and setters
-  TokenType getType();
-  void setType(TokenType type);
-  std::string getValue();
-  void setValue(std::string str);
+  // Most operations virtual, as subclasses have variety of behaviors 
+  Exp();
+  virtual ~Exp();
+  Exp(const Exp& tok);
+  Exp& operator=(const Exp& tok);
+  // For Error Reporting, in superclass because behavior is the same
   long long getLine();
   void setLine(long long val);
   long long getCol();
   void setCol(long long val);
-  void printToken(std::ostream& stream);
+  // Core functions of evaluator
+  virtual ExpType getType();
+  virtual Exp& eval() = 0;
+  virtual void print(std::ostream& stream) = 0;
+  virtual void applyProduction(Lexer& lexer) = 0;
+  std::unique_ptr<Exp> parse(Lexer& lexer);
+  // Visitor
+  virtual void accept(Visitor& vis) = 0;
 };
+
+
+// Implements InterpreterError, based on std::runtime_error
+class ParseError : public InterpreterError, public std::runtime_error
+{
+private:
+  long long line, col;
+public:
+  // 
+  ParseError(const std::string& error);
+  ParseError(const std::string& error, long long l, long long c);
+  ~ParseError();
+  long long getLine() override;
+  void setLine(long long l);
+  long long getCol() override;
+  void setCol(long long c);
+  void print(std::ostream& stream);
+};
+
 
 
 #endif

@@ -77,28 +77,28 @@ void Token::print(std::ostream& stream)
   std::string typeString;
   switch (tokenType)
   {
-  case PAREN:
+  case TokenType::PAREN:
     typeString = "PAREN";
     break;
-  case QUOTE:
+  case TokenType::QUOTE:
     typeString = "QUOTE";
     break;
-  case HASH:
+  case TokenType::HASH:
     typeString = "HASH";
     break;
-  case IDENTIFIER:
+  case TokenType::IDENTIFIER:
     typeString = "IDENTIFIER";
     break;
-  case BOOLEAN:
+  case TokenType::BOOLEAN:
     typeString = "BOOLEAN";
     break;
-  case NUMBER:
+  case TokenType::NUMBER:
     typeString = "NUMBER";
     break;
-  case STRING:
+  case TokenType::STRING:
     typeString = "STRING";
     break;
-  case END:
+  case TokenType::END:
     typeString = "END";
     break;
   default:

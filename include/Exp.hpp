@@ -86,7 +86,7 @@ public:
   void parseExps(Lexer& lexer);
 };
 
-class Env : Exp
+class Env : public Exp
 {
 };
 

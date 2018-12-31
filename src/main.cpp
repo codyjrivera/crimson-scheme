@@ -13,19 +13,11 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "Lexer.hpp"
-#include "Token.hpp"
+#include "Interpreter.hpp"
 
 int main()
 {
-  Lexer lex;
-  Token tok;
-  tok = lex.next();
-  while (tok.getType() != TokenType::END)
-  {
-    tok.print(std::cout);
-    tok = lex.next();
-  }
-  tok.print(std::cout);
+  Interpreter main;
+  main.repl(std::cin);
   return 0;
 }

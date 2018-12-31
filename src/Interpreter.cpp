@@ -21,7 +21,7 @@ Interpreter::Interpreter(const Interpreter& ip)
     output(ip.output),
     aux(ip.aux) {}
 
-Interpreter& operator=(const Interpreter& ip)
+Interpreter& Interpreter::operator=(const Interpreter& ip)
 {
   lexer = ip.lexer;
   output = ip.output;
@@ -29,3 +29,33 @@ Interpreter& operator=(const Interpreter& ip)
   return *this;
 }
 
+// Operations
+
+void Interpreter::runFile(std::istream& stream)
+{
+  (void)stream;
+  *output << "runFile not implemented yet" << std::endl;
+}
+
+void Interpreter::repl(std::istream& stream)
+{
+  Token tok;
+  lexer.setStream(stream);
+  tok = lexer.next();
+  while (tok.getType() != TokenType::END)
+  {
+    tok.print(*output);
+    tok = lexer.next();
+  }
+  tok.print(*output);
+}
+
+void Interpreter::setOutput(std::ostream& stream)
+{
+  output = &stream;
+}
+
+void Interpreter::setAux(std::ostream& stream)
+{
+  aux = &stream;
+}

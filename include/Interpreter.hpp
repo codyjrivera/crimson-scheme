@@ -22,10 +22,10 @@ public:
   ~Interpreter();
   Interpreter(const Interpreter& ip);
   Interpreter& operator=(const Interpreter& ip);
-  runFile(std::istream& stream);
-  repl(std::istream& stream);
-  setOutput(std::ostream& stream);
-  setAux(std::ostream& stream);
+  void runFile(std::istream& stream);
+  void repl(std::istream& stream);
+  void setOutput(std::ostream& stream);
+  void setAux(std::ostream& stream);
 };
 
 #endif

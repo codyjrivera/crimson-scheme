@@ -18,12 +18,14 @@ enum class ExpType
   SYMBOL,
   STRING,
   CONS,
+  NIL,
   // Control Expressions
   DEFINE,
   ASSIGN,
   VARIABLE,
   LAMBDA,
   PROCEDURE,
+  CALL,
   ENVIRONMENT,
   BEGIN,
   IF,
@@ -39,10 +41,15 @@ class Env;
 class Exp
 {
 private:
+  bool markVal = false;
   long long line, col;
 public:
   // Most operations virtual, as subclasses have variety of behaviors 
   virtual std::unique_ptr<Exp> clone();
+  // For garbage collection
+  bool isMarked();
+  void setMark(bool value);
+  virtual void mark() = 0;
   // For Error Reporting, in superclass because behavior is the same
   long long getLine();
   void setLine(long long l);
@@ -86,34 +93,22 @@ public:
   void parseExps(Lexer& lexer);
 };
 
-class Env : public Exp
+class NoneExp
 {
 };
+
+class Env
+{
+};
+
 
 // Virtual Visitor methods for each derived expression class
 class Visitor
 {
-  virtual void visit(TopExp& exp);
-};
-
-
-// Implements InterpreterError, based on std::runtime_error
-class ParseError : public InterpreterError, public std::runtime_error
-{
-private:
-  long long line, col;
 public:
-  // 
-  ParseError(const std::string& error);
-  ParseError(const std::string& error, long long l, long long c);
-  ~ParseError();
-  long long getLine() override;
-  void setLine(long long l);
-  long long getCol() override;
-  void setCol(long long c);
-  void print(std::ostream& stream);
+  virtual void visit(TopExp& exp) = 0;
+  virtual void visit(NoneExp& exp) = 0;
 };
-
 
 
 #endif

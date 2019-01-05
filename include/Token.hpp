@@ -10,6 +10,7 @@
 enum class TokenType
 {
   PAREN,
+  DOT,
   QUOTE,
   HASH,
   IDENTIFIER,

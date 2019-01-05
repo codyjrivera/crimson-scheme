@@ -83,6 +83,9 @@ void Token::print(std::ostream& stream)
   case TokenType::QUOTE:
     typeString = "QUOTE";
     break;
+  case TokenType::DOT:
+    typeString = "DOT";
+    break;
   case TokenType::HASH:
     typeString = "HASH";
     break;

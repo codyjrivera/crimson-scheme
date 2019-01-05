@@ -242,8 +242,12 @@ namespace
     }
     /* Handles + and - primitives */
     if (tokenString.length() == 1)
+    {
       if (tokenString[0] == '-' || tokenString[0] == '+')
         return Token(TokenType::IDENTIFIER, tokenString, line, col);
+      else if (tokenString[0] == '.')
+        return Token(TokenType::DOT, tokenString, line, col);
+    }
     return Token(type, tokenString, line, col);
   }
 

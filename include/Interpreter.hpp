@@ -13,6 +13,8 @@
 class Interpreter
 {
 private:
+  TopExp program;
+  Env topEnv;
   Lexer lexer;
   std::ostream *output;
   std::ostream *aux;

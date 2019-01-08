@@ -25,7 +25,7 @@ class Token
 {
 private:
   TokenType tokenType;
-  std::string value;
+  std::string value = std::string("");
   long long line, col;
 public:
   // Essential member functions

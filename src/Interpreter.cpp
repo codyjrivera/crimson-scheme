@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <limits>
 #include "Exp.hpp"
 #include "Lexer.hpp"
 #include "Token.hpp"
@@ -39,15 +40,26 @@ void Interpreter::runFile(std::istream& stream)
 
 void Interpreter::repl(std::istream& stream)
 {
-  Token tok;
-  lexer.setStream(stream);
-  tok = lexer.next();
-  while (tok.getType() != TokenType::END)
+  *aux << "Crimson-Scheme REPL:" << std::endl;
+  *aux << "Press CTRL-D to exit" << std::endl << std::endl;
+  while (!stream.eof())
   {
-    tok.print(*output);
-    tok = lexer.next();
+    *aux << "> ";
+    try
+    {
+      program.parseExp(lexer);
+      program.eval(topEnv).print(*output);
+    }
+    catch (InterpreterError& e)
+    {
+      e.print(*aux);
+      // Clears out REPL to handle next line
+      stream.clear();
+      stream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    lexer.resetPosition();
+    *aux << std::endl;
   }
-  tok.print(*output);
 }
 
 void Interpreter::setOutput(std::ostream& stream)

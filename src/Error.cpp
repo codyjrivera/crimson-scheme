@@ -47,6 +47,5 @@ void ParseError::print(std::ostream& stream)
   stream << "At line: " << line << ", col: " << col << std::endl;
   stream << std::endl;
   stream << "Parse Error: " << what() << std::endl;
-  stream << std::endl;
 }
 

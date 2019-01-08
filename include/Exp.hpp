@@ -40,12 +40,12 @@ class Env;
 
 class Exp
 {
-private:
+protected:
   bool markVal = false;
-  long long line, col;
+  long long line = 0, col = 0;
 public:
   // Most operations virtual, as subclasses have variety of behaviors 
-  virtual std::unique_ptr<Exp> clone();
+  virtual std::unique_ptr<Exp> clone() = 0;
   // For garbage collection
   bool isMarked();
   void setMark(bool value);
@@ -82,6 +82,7 @@ public:
   TopExp& operator=(const TopExp& exp);
   // Virtual functions declared in Exp
   std::unique_ptr<Exp> clone();
+  void mark() override;
   ExpType getType() override;
   void applyProduction(Lexer& lexer) override;
   Exp& eval(Env& env) override;
@@ -93,8 +94,24 @@ public:
   void parseExps(Lexer& lexer);
 };
 
-class NoneExp
+
+class NoneExp : public Exp
 {
+public:
+  // Constructors, copy constructors, and destructors
+  NoneExp() = default;
+  ~NoneExp() = default;
+  NoneExp(const NoneExp& exp) = default;
+  NoneExp& operator=(const NoneExp& exp) = default;
+  // Virtual functions declared in Exp
+  std::unique_ptr<Exp> clone();
+  void mark() override;
+  ExpType getType() override;
+  void applyProduction(Lexer& lexer) override;
+  Exp& eval(Env& env) override;
+  Exp& select(Env& env) override;
+  void print(std::ostream& stream) override;
+  void accept(Visitor& vis) override;
 };
 
 class Env

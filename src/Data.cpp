@@ -203,7 +203,7 @@ Exp& String::select(Env& env)
 
 void String::print(std::ostream& stream)
 {
-  stream << objValue;
+  stream << "\"" << objValue << "\"";
 }
 
 void String::accept(Visitor& vis)

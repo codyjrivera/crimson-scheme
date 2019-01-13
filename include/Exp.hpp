@@ -20,6 +20,7 @@ enum class ExpType
   CONS,
   NIL,
   // Control Expressions
+  QUOTE,
   DEFINE,
   ASSIGN,
   VARIABLE,
@@ -35,8 +36,16 @@ enum class ExpType
 
 
 // Needs to be forward declared
-class Visitor;
+class Exp;
+class TopExp;
+class NoneExp;
+class Boolean;
+class Integer;
+class Real;
+class Symbol;
+class String;
 class Env;
+class Visitor;
 
 class Exp
 {
@@ -44,12 +53,16 @@ protected:
   bool markVal = false;
   long long line = 0, col = 0;
 public:
+  Exp() = default;
+  ~Exp() = default;
+  Exp(const Exp& exp) = default;
+  Exp& operator=(const Exp& exp) = default;
   // Most operations virtual, as subclasses have variety of behaviors 
   virtual std::unique_ptr<Exp> clone() = 0;
   // For garbage collection
   bool isMarked();
   void setMark(bool value);
-  virtual void mark() = 0;
+  virtual void mark();
   // For Error Reporting, in superclass because behavior is the same
   long long getLine();
   void setLine(long long l);
@@ -81,8 +94,7 @@ public:
   TopExp(const TopExp& exp);
   TopExp& operator=(const TopExp& exp);
   // Virtual functions declared in Exp
-  std::unique_ptr<Exp> clone();
-  void mark() override;
+  std::unique_ptr<Exp> clone() override;
   ExpType getType() override;
   void applyProduction(Lexer& lexer) override;
   Exp& eval(Env& env) override;
@@ -104,8 +116,7 @@ public:
   NoneExp(const NoneExp& exp) = default;
   NoneExp& operator=(const NoneExp& exp) = default;
   // Virtual functions declared in Exp
-  std::unique_ptr<Exp> clone();
-  void mark() override;
+  std::unique_ptr<Exp> clone() override;
   ExpType getType() override;
   void applyProduction(Lexer& lexer) override;
   Exp& eval(Env& env) override;
@@ -125,6 +136,11 @@ class Visitor
 public:
   virtual void visit(TopExp& exp) = 0;
   virtual void visit(NoneExp& exp) = 0;
+  virtual void visit(Boolean& exp) = 0;
+  virtual void visit(Integer& exp) = 0;
+  virtual void visit(Real& exp) = 0;
+  virtual void visit(String& exp) = 0;
+  virtual void visit(Symbol& exp) = 0;
 };
 
 

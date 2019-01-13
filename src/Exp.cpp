@@ -18,6 +18,14 @@ void Exp::setMark(bool value)
   markVal = value;
 }
 
+void Exp::mark()
+{
+  if (!isMarked())
+    setMark(true);
+}
+
+
+
 // Top level expression implementation
 TopExp::TopExp()
   : program(new NoneExp()) {}
@@ -25,18 +33,14 @@ TopExp::TopExp()
 TopExp::~TopExp() {}
 
 TopExp::TopExp(const TopExp& exp)
+  : Exp(exp)
 {
-  markVal = exp.markVal;
-  line = exp.line;
-  col = exp.col;
   program = std::move(exp.program->clone());
 }
 
 TopExp& TopExp::operator=(const TopExp& exp)
 {
-  markVal = exp.markVal;
-  line = exp.line;
-  col = exp.col;
+  operator=(exp);
   program = std::move(exp.program->clone());
   return *this;
 }
@@ -46,11 +50,6 @@ std::unique_ptr<Exp> TopExp::clone()
   return std::unique_ptr<Exp>(new TopExp(*this));
 }
 
-void TopExp::mark()
-{
-  if (!program->isMarked())
-    program->mark();
-}
 
 ExpType TopExp::getType()
 {
@@ -59,7 +58,21 @@ ExpType TopExp::getType()
 
 void TopExp::applyProduction(Lexer& lexer)
 {
+  Token tok;
   program = std::move(Exp::parse(lexer));
+  // If nothing was parsed but a token was entered, extract that token and signal an error
+  if (program->getType() == ExpType::NONE)
+  {
+    tok = lexer.next();
+    if (tok.getType() == TokenType::END)
+    {
+      return;
+    }
+    else
+    {
+      throw ParseError("Unexpected Token: " + tok.getValue(), tok.getLine(), tok.getCol());
+    }
+  }
 }
 
 Exp& TopExp::eval(Env& env)
@@ -104,10 +117,6 @@ std::unique_ptr<Exp> NoneExp::clone()
   return std::unique_ptr<Exp>(new NoneExp(*this));
 }
 
-void NoneExp::mark()
-{
-  setMark(true);
-}
 
 ExpType NoneExp::getType()
 {

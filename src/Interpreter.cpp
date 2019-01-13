@@ -48,6 +48,7 @@ void Interpreter::repl(std::istream& stream)
     try
     {
       program.parseExp(lexer);
+      *output << ":= ";
       program.eval(topEnv).print(*output);
     }
     catch (InterpreterError& e)

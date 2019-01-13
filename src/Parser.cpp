@@ -6,19 +6,25 @@
 #include "Token.hpp"
 #include "Error.hpp"
 #include "Exp.hpp"
+#include "Data.hpp"
+
+
+namespace
+{
+  // Data parsing helper functions
+  std::unique_ptr<Exp> parseBoolean(Lexer& lexer);
+}
+
 
 std::unique_ptr<Exp> Exp::parse(Lexer& lexer)
 {
-  Token tok = lexer.peek();
-  std::unique_ptr<Exp> data;
+  Token tok = lexer.peek();;
   switch (tok.getType())
   {
   case TokenType::END:
     return std::unique_ptr<Exp>(new NoneExp());
   default:
-    data = std::move(parseData(lexer));
-    tok = lexer.next();
-    return data;
+    return parseData(lexer);
   }
 }
 
@@ -28,8 +34,26 @@ std::unique_ptr<Exp> Exp::parseData(Lexer& lexer)
   Token tok = lexer.peek();
   switch (tok.getType())
   {
+  case TokenType::BOOLEAN:
+    return parseBoolean(lexer);
   default:
-    break;
+    return std::unique_ptr<Exp>(new NoneExp());
   }
-  return std::unique_ptr<Exp>(new NoneExp());
+}
+
+namespace
+{
+
+  std::unique_ptr<Exp> parseBoolean(Lexer& lexer)
+  {
+    Token tok = lexer.next();
+    if (tok.getValue() == "#t")
+    {
+      return std::unique_ptr<Exp>(new Boolean(true));
+    }
+    else
+    {
+      return std::unique_ptr<Exp>(new Boolean(false));
+    }
+  }
 }

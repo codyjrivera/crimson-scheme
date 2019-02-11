@@ -127,6 +127,10 @@ public:
 
 class Env
 {
+public:
+  int a;
+private:
+  int b;
 };
 
 

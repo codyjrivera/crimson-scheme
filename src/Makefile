@@ -7,7 +7,7 @@ CPPSTD = c++11
 CPPFLAGS = -Wall -Wextra -g -std=$(CPPSTD)
 
 # Project Source Variables
-INCLUDEDIR = ../include
+INCLUDEDIR = . 
 TESTDIR = ../tests
 
 TESTS = simple.test sort.test

@@ -80,11 +80,11 @@ namespace
     }
     catch (std::invalid_argument& e)
     {
-      throw new ParseError("Cannot convert to a number: " + tok.getValue(), tok.getLine(), tok.getCol());
+      throw ParseError("Cannot convert to a number: " + tok.getValue(), tok.getLine(), tok.getCol());
     }
     catch (std::out_of_range& e)
     {
-      throw new ParseError("Number out of range: " + tok.getValue(), tok.getLine(), tok.getCol());
+      throw ParseError("Number out of range: " + tok.getValue(), tok.getLine(), tok.getCol());
     }
     return std::unique_ptr<Exp>(new NoneExp());
   }

@@ -1,50 +1,59 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <exception>
 #include "Exp.hpp"
 #include "Error.hpp"
 
 
-// Implementation of ParseError
+// Implementation of InterpreterError
 
-ParseError::ParseError(const std::string& error)
-  : std::runtime_error(error),
-    line(0),
-    col(0) {}
+InterpreterError::InterpreterError(const std::string& error)
+    : std::runtime_error(error),
+      line(0),
+      col(0) {}
 
-ParseError::ParseError(const std::string& error, long long l, long long c)
-  : std::runtime_error(error),
-    line(l),
-    col(c) {}
+InterpreterError::InterpreterError(const std::string& error, long long l, long long c)
+    : std::runtime_error(error),
+      line(l),
+      col(c) {}
 
-ParseError::~ParseError() {}
+InterpreterError::~InterpreterError() {}
 
 
-long long ParseError::getLine()
+long long InterpreterError::getLine()
 {
-  return line;
+    return line;
 }
 
-void ParseError::setLine(long long l)
+void InterpreterError::setLine(long long l)
 {
-  line = l;
+    line = l;
 }
 
-long long ParseError::getCol()
+long long InterpreterError::getCol()
 {
-  return col;
+    return col;
 }
 
-void ParseError::setCol(long long c)
+void InterpreterError::setCol(long long c)
 {
-  col = c;
+    col = c;
 }
 
 
-void ParseError::print(std::ostream& stream)
+std::string InterpreterError::toString()
 {
-  stream << std::endl;
-  stream << "At line: " << line << ", col: " << col << "," << std::endl;
-  stream << "Parse error: " << what() << std::endl;
+    std::stringstream stream;
+    stream << "At (line: " << line << ", col: " << col << "): " 
+           << std::endl << "Error: " << what() << std::endl;
+    return stream.str();
 }
 
+
+
+std::ostream& operator<<(std::ostream& stream, InterpreterError& error)
+{
+    stream << error.toString();
+    return stream;
+}

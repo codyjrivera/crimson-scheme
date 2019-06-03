@@ -3,135 +3,62 @@
 
 #include <iostream>
 #include <string>
-#include <memory>
+#include <vector>
 #include <exception>
 #include "Lexer.hpp"
 #include "Error.hpp"
 #include "Exp.hpp"
 
-
-// Boolean data - either true or false
-class Boolean : public Exp
+enum class DataType
 {
-private:
-  bool objValue;
-public:
-  Boolean() = default;
-  Boolean(bool value);
-  ~Boolean() = default;
-  Boolean(const Boolean& value) = default;
-  Boolean& operator=(const Boolean& value) = default;
-  // Virtual functions in Exp
-  std::unique_ptr<Exp> clone() override;
-  ExpType getType() override;
-  void applyProduction(Lexer& lexer) override;
-  Exp& eval(Env& env) override;
-  Exp& select(Env& env) override;
-  void print(std::ostream& stream) override;
-  void accept(Visitor& vis) override;
-  // Unique functions
-  bool getValue();
-  void setValue(bool value);
+    // Primitive Data
+    BOOLEAN,
+    INTEGER,
+    FLOAT,
+    SYMBOL,
+    STRING,
+    PRIM_PROCEDURE,
+    UNDEFINED
+    
+    // Compound Data to come later
 };
 
 
-// Integer data - uses long long
-class Integer : public Exp
+struct Data
 {
-private:
-  long long objValue;
-public:
-  Integer() = default;
-  Integer(long long value);
-  ~Integer() = default;
-  Integer(const Integer& value) = default;
-  Integer& operator=(const Integer& value) = default;
-  // Virtual functions in Exp
-  std::unique_ptr<Exp> clone() override;
-  ExpType getType() override;
-  void applyProduction(Lexer& lexer) override;
-  Exp& eval(Env& env) override;
-  Exp& select(Env& env) override;
-  void print(std::ostream& stream) override;
-  void accept(Visitor& vis) override;
-  // Unique functions
-  long long getValue();
-  void setValue(long long value);
+    DataType type;
+    std::string text;
+    // Union of primitive data types
+    union
+    {
+        bool booleanVal;
+        long integerVal;
+        double floatVal;
+        void (*primProcedureVal)(Data&, std::vector<Data>&);
+    };
+
+    // Constructors
+    Data() : type(DataType::UNDEFINED) {}
+    Data(bool b) : type(DataType::BOOLEAN), booleanVal(b) {}
+    Data(long i) : type(DataType::INTEGER), integerVal(i) {}
+    Data(double f) : type(DataType::FLOAT), floatVal(f) {}
+    Data(DataType t, std::string s = std::string("")) : type(t), text(s) {}
+    Data(std::string name, void (*p)(Data&, std::vector<Data>&))
+        : type(DataType::PRIM_PROCEDURE), text(name), primProcedureVal(p)
+    {
+    }
+
+    // Named Constructors
+    static Data Boolean(bool b) { return Data(b); }
+    static Data Integer(long i) { return Data(i); }
+    static Data Float(double f) { return Data(f); }
+    static Data Symbol(std::string s) { return Data(DataType::SYMBOL, s); }
+    static Data String(std::string s) { return Data(DataType::STRING, s); }
+    static Data PrimProcedure(std::string name, void (*p)(Data&, std::vector<Data>&))
+    {
+        return Data(name, p);
+    }
 };
 
-
-// Real data - uses double
-class Real : public Exp
-{
-private:
-  double objValue;
-public:
-  Real() = default;
-  Real(double value);
-  ~Real() = default;
-  Real(const Real& value) = default;
-  Real& operator=(const Real& value) = default;
-  // Virtual functions in Exp
-  std::unique_ptr<Exp> clone() override;
-  ExpType getType() override;
-  void applyProduction(Lexer& lexer) override;
-  Exp& eval(Env& env) override;
-  Exp& select(Env& env) override;
-  void print(std::ostream& stream) override;
-  void accept(Visitor& vis) override;
-  // Unique functions
-  double getValue();
-  void setValue(double value);
-};
-
-
-// String data - uses std::string
-class String : public Exp
-{
-private:
-  std::string objValue;
-public:
-  String() = default;
-  String(std::string value);
-  ~String() = default;
-  String(const String& value) = default;
-  String& operator=(const String& value) = default;
-  // Virtual functions in Exp
-  std::unique_ptr<Exp> clone() override;
-  ExpType getType() override;
-  void applyProduction(Lexer& lexer) override;
-  Exp& eval(Env& env) override;
-  Exp& select(Env& env) override;
-  void print(std::ostream& stream) override;
-  void accept(Visitor& vis) override;
-  // Unique functions
-  std::string getValue();
-  void setValue(std::string value);
-  std::string& getRef();
-};
-
-class Symbol : public Exp
-{
-private:
-  std::string objValue;
-public:
-  Symbol() = default;
-  Symbol(std::string value);
-  ~Symbol() = default;
-  Symbol(const Symbol& value) = default;
-  Symbol& operator=(const Symbol& value) = default;
-  // Virtual functions in Exp
-  std::unique_ptr<Exp> clone() override;
-  ExpType getType() override;
-  void applyProduction(Lexer& lexer) override;
-  Exp& eval(Env& env) override;
-  Exp& select(Env& env) override;
-  void print(std::ostream& stream) override;
-  void accept(Visitor& vis) override;
-  // Unique functions
-  std::string getValue();
-  void setValue(std::string value);
-  std::string& getRef();
-};
 
 #endif

@@ -15,9 +15,43 @@
 #include <string>
 #include "Interpreter.hpp"
 
+
+void runFile(std::istream& file);
+void repl(Interpreter& i);
+
+
 int main()
 {
-  Interpreter main;
-  main.repl(std::cin);
-  return 0;
+    Interpreter main;
+    repl(main);
+    return 0;
 }
+
+
+void repl(Interpreter& i)
+{
+    Lexer lexer(std::cin);
+    std::cout << "Crimson-Scheme REPL:" << std::endl;
+    std::cout << "Press CTRL-D to exit" << std::endl << std::endl;
+    while (!std::cin.eof())
+    {
+        std::cout << "> ";
+        try
+        {
+            i.parseExp(lexer);
+            i.eval();
+            std::cout << i.resultToString() << std::endl;
+        }
+        catch (InterpreterError& e)
+        {
+            std::cout << e << std::endl;
+        }
+        lexer.flush();
+        std::cout << std::endl;
+    }
+}
+
+
+
+
+

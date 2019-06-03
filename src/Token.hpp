@@ -9,42 +9,45 @@
 
 enum class TokenType
 {
-  PAREN,
-  DOT,
-  QUOTE,
-  HASH,
-  IDENTIFIER,
-  BOOLEAN,
-  NUMBER,
-  STRING,
-  END
+    PAREN,
+    DOT,
+    QUOTE,
+    HASH,
+    IDENTIFIER,
+    BOOLEAN,
+    NUMBER,
+    STRING,
+    END
 };
-
 
 class Token
 {
-private:
-  TokenType tokenType;
-  std::string value = std::string("");
-  long long line, col;
-public:
-  // Essential member functions
-  Token();
-  Token(TokenType type, std::string val, long long l, long long c);
-  ~Token();
-  Token(const Token& tok);
-  Token& operator=(const Token& tok);
-  // Getters and setters
-  TokenType getType();
-  void setType(TokenType type);
-  std::string getValue();
-  void setValue(std::string str);
-  long long getLine();
-  void setLine(long long val);
-  long long getCol();
-  void setCol(long long val);
-  void print(std::ostream& stream);
+  private:
+    TokenType tokenType;
+    std::string value = std::string("");
+    long line, col;
+
+  public:
+    // Essential member functions
+    Token();
+    Token(TokenType type, std::string val, long l, long c);
+    ~Token();
+    Token(const Token& tok);
+    Token& operator=(const Token& tok);
+    // Getters and setters
+    TokenType getType() const;
+    void setType(TokenType type);
+    std::string getValue() const;
+    void setValue(std::string str);
+    long getLine() const;
+    void setLine(long val);
+    long getCol() const;
+    void setCol(long val);
+    std::string toString() const;
 };
+
+
+std::ostream& operator<<(std::ostream& stream, const Token& tok);
 
 
 #endif

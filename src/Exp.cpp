@@ -1,153 +1,93 @@
 #include <iostream>
 #include <string>
-#include <memory>
 #include <exception>
 #include "Lexer.hpp"
 #include "Error.hpp"
 #include "Exp.hpp"
 
 
-// Common Expression Routines
-bool Exp::isMarked()
+/*
+  Expression Implementation - Implemented as a 'cons cell' style data structure, with
+  left and right descendants.
+  
+  Carries two mark variables to indicate the expressions usage either in the AST
+  or in a procedure object.
+ */
+
+
+// Tree traversals for mark, unmark, and cleanup
+void Exp::expMark()
 {
-  return markVal;
-}
-
-void Exp::setMark(bool value)
-{
-  markVal = value;
-}
-
-void Exp::mark()
-{
-  if (!isMarked())
-    setMark(true);
-}
-
-
-
-// Top level expression implementation
-TopExp::TopExp()
-  : program(new NoneExp()) {}
-
-TopExp::~TopExp() {}
-
-TopExp::TopExp(const TopExp& exp)
-  : Exp(exp)
-{
-  program = std::move(exp.program->clone());
-}
-
-TopExp& TopExp::operator=(const TopExp& exp)
-{
-  operator=(exp);
-  program = std::move(exp.program->clone());
-  return *this;
-}
-
-std::unique_ptr<Exp> TopExp::clone()
-{
-  return std::unique_ptr<Exp>(new TopExp(*this));
-}
-
-
-ExpType TopExp::getType()
-{
-  return ExpType::TOP;
-}
-
-void TopExp::applyProduction(Lexer& lexer)
-{
-  Token tok;
-  program = std::move(Exp::parse(lexer));
-  // If nothing was parsed but a token was entered, extract that token and signal an error
-  if (program->getType() == ExpType::NONE)
-  {
-    tok = lexer.next();
-    if (tok.getType() == TokenType::END)
+    mark = true;
+    if (!dataFlag)
     {
-      return;
+        if (leftExp != NULL)
+        {
+            leftExp->expMark();
+        }
+        if (rightExp != NULL)
+        {
+            rightExp->expMark();
+        }
     }
-    else
+}
+
+
+void Exp::expUnmark()
+{
+    mark = false;
+    if (!dataFlag)
     {
-      throw ParseError("Unexpected Token: " + tok.getValue(), tok.getLine(), tok.getCol());
+        if (leftExp != NULL)
+        {
+            leftExp->expUnmark();
+        }
+        if (rightExp != NULL)
+        {
+            rightExp->expUnmark();
+        }
     }
-  }
 }
 
-Exp& TopExp::eval(Env& env)
+
+void Exp::cleanup()
 {
-  Exp& lastExp = program->select(env);
-  return lastExp.eval(env);
+    expUnmark();
+    if (!proc)
+    {
+        if (!dataFlag)
+        {
+            if (leftExp != NULL)
+            {
+                leftExp->cleanup();
+            }
+            if (rightExp != NULL)
+            {
+                rightExp->cleanup();
+            }
+            delete leftExp;
+            delete rightExp;
+        }   
+    }
 }
 
-Exp& TopExp::select(Env& env)
-{
-  return program->select(env);
-}
+bool Exp::isProc() const { return proc; }
+void Exp::setProc(bool p) { proc = p; }
 
-void TopExp::print(std::ostream& stream)
-{
-  stream << "<TOP-LEVEL EXPRESSION>" << std::endl;
-  program->print(stream);
-  stream << std::endl << "<END TOP-LEVEL EXPRESSION>" << std::endl;
-}
+bool Exp::isData() const { return dataFlag; }
+void Exp::setDataFlag(bool d) { dataFlag = d; }
 
-void TopExp::accept(Visitor& vis)
-{
-  vis.visit(*this);
-}
+Exp* Exp::getLeft() { return leftExp; }
+void Exp::setLeft(Exp* l) { leftExp = l; }
 
-void TopExp::parseExp(Lexer& lexer)
-{
-  applyProduction(lexer);
-}
+Exp* Exp::getRight() { return rightExp; }
+void Exp::setRight(Exp* r) { rightExp = r; }
 
-void TopExp::parseExps(Lexer& lexer)
-{
-  (void) lexer;
-  throw new ParseError("Interpreter does not support parsing multiple top-level exps at this time");
-}
+Data& getData() { return data; }
+void setData(const Data& d) { data = d; }
 
+long getRow() const { return row; }
+void setRow(long r) { row = r; }
 
-
-// None expression implementation
-std::unique_ptr<Exp> NoneExp::clone()
-{
-  return std::unique_ptr<Exp>(new NoneExp(*this));
-}
-
-
-ExpType NoneExp::getType()
-{
-  return ExpType::NONE;
-}
-
-void NoneExp::applyProduction(Lexer& lexer)
-{
-  (void) lexer;
-}
-
-Exp& NoneExp::eval(Env& env)
-{
-  (void) env;
-  return *this;
-}
-
-Exp& NoneExp::select(Env& env)
-{
-  (void) env;
-  return *this;
-}
-
-void NoneExp::print(std::ostream& stream)
-{
-  stream << "";
-}
-
-void NoneExp::accept(Visitor& vis)
-{
-  vis.visit(*this);
-}
-
-
+long getCol() const { return col; }
+void setCol(long c) { col = c; }

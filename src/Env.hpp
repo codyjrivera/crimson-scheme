@@ -14,6 +14,7 @@ class Env : Exp
 private:
   Env* top;
   Env* parent;
+    /*
   // Lifetime storage
   std::vector<std::unique_ptr<Exp>> perm;
   // Garbage Collected Storage
@@ -47,7 +48,7 @@ public:
   void mutate(std::string var, Exp* val);
 
   void extend(std::vector<std::string> vars, std::vector<Exp*> vals);
+    */
 };
-
 
 #endif

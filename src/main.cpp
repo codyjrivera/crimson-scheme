@@ -38,13 +38,13 @@ void repl(Interpreter& i)
         std::cout << "> ";
         try
         {
-            i.parseExp(lexer);
-            i.eval();
-            std::cout << i.resultToString() << std::endl;
+            i.readExp(lexer);
+            //i.eval();
+            //std::cout << i.resultToString();
         }
         catch (InterpreterError& e)
         {
-            std::cout << e << std::endl;
+            std::cout << std::endl << e;
         }
         lexer.flush();
         std::cout << std::endl;

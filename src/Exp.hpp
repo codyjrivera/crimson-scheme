@@ -25,22 +25,22 @@ private:
     Data data;
 
     // Location
-    long row, col;
+    long line, col;
     
 public:
     Exp(long r = 1, long c = 0)
         : mark(true), proc(false), dataFlag(false),
-          leftExp(NULL), rightExp(NULL), row(r), col(c)
+          leftExp(NULL), rightExp(NULL), line(r), col(c)
     {
     }
     Exp(const Data& d, long r = 1, long c = 0)
         : mark(true), proc(false), dataFlag(true),
-          leftExp(NULL), rightExp(NULL), data(d), row(r), col(c)
+          leftExp(NULL), rightExp(NULL), data(d), line(r), col(c)
     {
     }
     Exp(Exp* left, Exp* right, long r = 1, long c = 0)
         : mark(true), proc(false), dataFlag(false),
-          leftExp(left), rightExp(right), row(r), col(c)
+          leftExp(left), rightExp(right), line(r), col(c)
     {
     }
 
@@ -61,10 +61,14 @@ public:
     Data& getData();
     void setData(const Data& d);
 
-    long getRow() const;
-    void setRow(long r);
+    long getLine() const;
+    void setLine(long r);
     long getCol() const;
     void setCol(long c);
+
+    // Parsing routines
+    static Exp* parseExp(Lexer& lex);
+    static Exp* parseFile(Lexer& lex);
 };
 
 

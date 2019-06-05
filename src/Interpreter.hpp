@@ -13,31 +13,51 @@
 #include "Error.hpp"
 
 
+/*
+  NOTE - this class is implemented in several modules, as this class has
+  several concerns, listed here
+
+  Parsing - Parser.cpp
+  Interpreting - Eval.cpp
+  Language Primitives and Run-Time Support - Language.cpp
+  Pretty-Printing and Result Printing, Misc. - Interpreter.cpp
+
+  Other concerns are handled in member classes
+ */
+
+
 class Interpreter
 {
 private:
     Exp* program;
-    std::list<Env*> envList;
+    //std::list<Env*> envList;
     // To add - procList, perhaps symList, definitely heap
     Data result;
   
     std::ostream *output;
     std::ostream *aux;
 
+    Exp* parseExp(Lexer& lex);
+    Exp* parseMultipleExps(Lexer& lex);
+    std::string prettyPrint(Exp& exp);
     Data eval(Exp& exp, Env& env);
-    // TODO -- Add Eval when needed
+    // TODO -- Add Apply when needed
+    std::string dataToString(Data& result);
+    // Here because sometimes printing requires additional context
+    // that isn't provided by the Data class itself
   
 public:
-    Interpreter(std::ostream& o = std::cout, std::ostream& a = std::cout) : output(&o), aux(&a)
+    Interpreter(std::ostream& o = std::cout, std::ostream& a = std::cout) : program(NULL), output(&o), aux(&a)
     {
-        initInterpreter();
+        //initInterpreter();
     }
 
     ~Interpreter();
 
     void initInterpreter();
-    void parseExp(Lexer& lex);
-    void parseFile(Lexer& lex);
+    void readExp(Lexer& lex);
+    void readFile(Lexer& lex);
+    std::string programToString();
     void eval();
     std::string resultToString();
     

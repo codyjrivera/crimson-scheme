@@ -52,6 +52,7 @@ void Lexer::setStream(std::istream& stream) { inStream = &stream; flush(); }
 void Lexer::flush()
 {
     std::string tmp;
+    saveToken = false;
     getline(*inStream, tmp);
     line = 1;
     col = 0;

@@ -41,14 +41,20 @@ void Interpreter::readExp(Lexer& lex)
     
 }
 
+std::string Interpreter::programToString()
+{
+    return prettyPrint(*program);
+}
+
 void Interpreter::setOutput(std::ostream& stream) { output = &stream; }
 
 void Interpreter::setAux(std::ostream& stream) { aux = &stream; }
 
 
-/*
+
 // Pretty Printer
 static void prettyPrintExp(Exp* exp, std::string& out, long indent);
+static void prettyPrintExpRest(Exp* exp, std::string& out, long indent);
 static void prettyPrintBegin(Exp* exp, std::string& out, long indent);
 static void prettyPrintDefine(Exp* exp, std::string& out, long indent);
 static void prettyPrintIf(Exp* exp, std::string& out, long indent);
@@ -83,7 +89,7 @@ void prettyPrintExp(Exp* exp, std::string& out, long indent)
             {
                 if (left->isData() && left->getData().type == DataType::SYMBOL)
                 {
-                    std::string keyword = left->getData().text;
+                    std::string& keyword = left->getData().text;
                     // Check for syntactical forms
                     if (keyword == "begin")
                     {
@@ -123,18 +129,18 @@ void prettyPrintExp(Exp* exp, std::string& out, long indent)
             }
 
             Exp* right = exp->getRight();
-            if (right != NULL && right->isData())
+            if (right != NULL)
             {
                 if (right->isData())
                 {
                     out.append(" . ");
-                    prettyPrintExp(right, out, indent);
+                    prettyPrintExpRest(right, out, indent);
                     out.append(1, ')');
                 }
                 else
                 {
                     out.append(1, ' ');
-                    prettyPrintExp(right, out, indent);
+                    prettyPrintExpRest(right, out, indent);
                     out.append(1, ')');
                 }
             }
@@ -147,8 +153,47 @@ void prettyPrintExp(Exp* exp, std::string& out, long indent)
 }
 
 
+void prettyPrintExpRest(Exp* exp, std::string& out, long indent)
+{
+    if (exp != NULL)
+    {
+        if (exp->isData())
+        {
+            out.append(exp->getData().toString());
+        }
+        else
+        {
+            Exp* left = exp->getLeft();
+            if (left == NULL)
+            {
+                out.append("()");
+            }
+            else
+            {
+                prettyPrintExp(left, out, indent);
+            }
 
-void prettyPrintBegin(Exp* exp, std::string out, long indent)
+            Exp* right = exp->getRight();
+            if (right != NULL)
+            {
+                if (right->isData())
+                {
+                    out.append(" . ");
+                    prettyPrintExpRest(right, out, indent);
+                }
+                else
+                {
+                    out.append(1, ' ');
+                    prettyPrintExpRest(right, out, indent);
+                }
+            }
+        }
+    }
+}
+
+
+
+void prettyPrintBegin(Exp* exp, std::string& out, long indent)
 {
     const long BEGIN_INDENT = 2;
     long newIndent = indent + BEGIN_INDENT;
@@ -172,7 +217,7 @@ void prettyPrintBegin(Exp* exp, std::string out, long indent)
     }
 
     // Edge Case
-    if (iter->isData)
+    if (iter != NULL && iter->isData())
     {
         out.append(" . ");
         prettyPrintExp(iter, out, indent);
@@ -182,7 +227,7 @@ void prettyPrintBegin(Exp* exp, std::string out, long indent)
 }
 
 
-void prettyPrintDefine(Exp* exp, std::string out, long indent)
+void prettyPrintDefine(Exp* exp, std::string& out, long indent)
 {
     const long DEFINE_INDENT = 2;
     long newIndent = indent + DEFINE_INDENT;
@@ -191,30 +236,169 @@ void prettyPrintDefine(Exp* exp, std::string out, long indent)
     out.append("(define");
 
     // First Element
-    
-    while (iter != NULL && !iter->isData())
+    if (iter != NULL && !iter->isData() && !iter->getLeft()->isData())
     {
-        out.append(1, '\n');
-        out.append(newIndent, ' ');
-        if (iter->getLeft() != NULL)
-        {
-            prettyPrintExp(iter->getLeft(), out, newIndent);
-        }
-        else
-        {
-            out.append("()");
-        }
+        // Handles function define syntactic sugar
+        // Prints function prototype
+        out.append(1, ' ');
+        prettyPrintExp(iter->getLeft(), out, indent);
         iter = iter->getRight();
+        // Prints function body
+        while (iter != NULL && !iter->isData())
+        {
+            out.append(1, '\n');
+            out.append(newIndent, ' ');
+            if (iter->getLeft() != NULL)
+            {
+                prettyPrintExp(iter->getLeft(), out, newIndent);
+            }
+            else
+            {
+                out.append("()");
+            }
+            iter = iter->getRight();
+        }
+        // Edge Case
+        if (iter != NULL && iter->isData())
+        {
+            out.append(" . ");
+            prettyPrintExp(iter, out, indent);
+        }
     }
-
-    // Edge Case
-    if (iter->isData)
+    else if (iter != NULL && !iter->isData() && iter->getLeft()->isData())
     {
-        out.append(" . ");
-        prettyPrintExp(iter, out, indent);
+        // Handles flat define
+        
+        size_t len_before = out.size(), diff;
+        out.append(1, ' ');
+        prettyPrintExp(iter->getLeft(), out, indent);
+        out.append(1, ' ');
+        diff = out.size() - len_before;
+        iter = iter->getRight();
+        prettyPrintExpRest(iter, out, indent + diff + 7);
     }
 
     out.append(1, ')');
 }
 
-*/
+
+void prettyPrintIf(Exp* exp, std::string& out, long indent)
+{
+    const long IF_INDENT = 4;
+    long newIndent = indent + IF_INDENT;
+    Exp* iter = exp->getRight();
+    // Common elements
+    out.append("(if");
+
+    if (iter != NULL)
+    {
+        out.append(1, ' ');
+        prettyPrintExp(iter->getLeft(), out, indent);
+        iter = iter->getRight();
+        // Prints function body
+        while (iter != NULL && !iter->isData())
+        {
+            out.append(1, '\n');
+            out.append(newIndent, ' ');
+            if (iter->getLeft() != NULL)
+            {
+                prettyPrintExp(iter->getLeft(), out, newIndent);
+            }
+            else
+            {
+                out.append("()");
+            }
+            iter = iter->getRight();
+        }
+    }
+    // Edge Case
+    if (iter != NULL && iter->isData())
+    {
+        out.append(" . ");
+        prettyPrintExp(iter, out, indent);
+    }
+    out.append(1, ')');
+}
+
+
+
+void prettyPrintWhile(Exp* exp, std::string& out, long indent)
+{
+    const long WHILE_INDENT = 7;
+    long newIndent = indent + WHILE_INDENT;
+    Exp* iter = exp->getRight();
+    // Common elements
+    out.append("(while");
+
+    if (iter != NULL)
+    {
+        out.append(1, ' ');
+        prettyPrintExp(iter->getLeft(), out, indent);
+        iter = iter->getRight();
+        // Prints function body
+        while (iter != NULL && !iter->isData())
+        {
+            out.append(1, '\n');
+            out.append(newIndent, ' ');
+            if (iter->getLeft() != NULL)
+            {
+                prettyPrintExp(iter->getLeft(), out, newIndent);
+            }
+            else
+            {
+                out.append("()");
+            }
+            iter = iter->getRight();
+        }
+    }
+    // Edge Case
+    if (iter != NULL && iter->isData())
+    {
+        out.append(" . ");
+        prettyPrintExp(iter, out, indent);
+    }
+    out.append(1, ')');
+}
+
+
+
+
+void prettyPrintLambda(Exp* exp, std::string& out, long indent)
+{
+    const long LAMBDA_INDENT = 2;
+    long newIndent = indent + LAMBDA_INDENT;
+    Exp* iter = exp->getRight();
+    // Common elements
+    out.append("(lambda");
+
+    if (iter != NULL)
+    {
+        out.append(1, ' ');
+        prettyPrintExp(iter->getLeft(), out, indent);
+        iter = iter->getRight();
+        // Prints function body
+        while (iter != NULL && !iter->isData())
+        {
+            out.append(1, '\n');
+            out.append(newIndent, ' ');
+            if (iter->getLeft() != NULL)
+            {
+                prettyPrintExp(iter->getLeft(), out, newIndent);
+            }
+            else
+            {
+                out.append("()");
+            }
+            iter = iter->getRight();
+        }
+    }
+    // Edge Case
+    if (iter != NULL && iter->isData())
+    {
+        out.append(" . ");
+        prettyPrintExp(iter, out, indent);
+    }
+    out.append(1, ')');
+}
+
+

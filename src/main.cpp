@@ -39,6 +39,7 @@ void repl(Interpreter& i)
         try
         {
             i.readExp(lexer);
+            std::cout << i.programToString() << std::endl;
             //i.eval();
             //std::cout << i.resultToString();
         }

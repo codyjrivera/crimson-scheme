@@ -46,7 +46,7 @@ void Interpreter::setOutput(std::ostream& stream) { output = &stream; }
 void Interpreter::setAux(std::ostream& stream) { aux = &stream; }
 
 
-
+/*
 // Pretty Printer
 static void prettyPrintExp(Exp* exp, std::string& out, long indent);
 static void prettyPrintBegin(Exp* exp, std::string& out, long indent);
@@ -216,3 +216,5 @@ void prettyPrintDefine(Exp* exp, std::string out, long indent)
 
     out.append(1, ')');
 }
+
+*/

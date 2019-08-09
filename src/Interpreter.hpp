@@ -17,7 +17,6 @@
   NOTE - this class is implemented in several modules, as this class has
   several concerns, listed here
 
-  Parsing - Parser.cpp
   Interpreting - Eval.cpp
   Language Primitives and Run-Time Support - Language.cpp
   Pretty-Printing and Result Printing, Misc. - Interpreter.cpp

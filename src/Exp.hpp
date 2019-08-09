@@ -65,10 +65,6 @@ public:
     void setLine(long r);
     long getCol() const;
     void setCol(long c);
-
-    // Parsing routines
-    static Exp* parseExp(Lexer& lex);
-    static Exp* parseFile(Lexer& lex);
 };
 
 

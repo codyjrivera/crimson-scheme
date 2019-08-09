@@ -27,6 +27,7 @@ enum class DataType
 struct Data
 {
     DataType type;
+    bool primitive;
     std::string text;
     // Union of primitive data types
     union
@@ -38,13 +39,13 @@ struct Data
     };
 
     // Constructors
-    Data() : type(DataType::UNDEFINED) {}
-    Data(bool b) : type(DataType::BOOLEAN), booleanVal(b) {}
-    Data(long i) : type(DataType::INTEGER), integerVal(i) {}
-    Data(double f) : type(DataType::FLOAT), floatVal(f) {}
-    Data(DataType t, std::string s = std::string("")) : type(t), text(s) {}
+    Data() : type(DataType::UNDEFINED), primitive(false) {}
+    Data(bool b) : type(DataType::BOOLEAN), primitive(true), booleanVal(b) {}
+    Data(long i) : type(DataType::INTEGER), primitive(true), integerVal(i) {}
+    Data(double f) : type(DataType::FLOAT), primitive(true), floatVal(f) {}
+    Data(DataType t, std::string s = std::string("")) : type(t), primitive(true), text(s) {}
     Data(std::string name, void (*p)(Data&, std::vector<Data>&))
-        : type(DataType::PRIM_PROCEDURE), text(name), primProcedureVal(p)
+        : type(DataType::PRIM_PROCEDURE), primitive(true), text(name), primProcedureVal(p)
     {
     }
 
@@ -58,6 +59,9 @@ struct Data
     {
         return Data(name, p);
     }
+
+    bool isPrimitive() const;
+    std::string toString() const;
 };
 
 

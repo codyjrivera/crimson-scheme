@@ -12,8 +12,8 @@ TESTDIR = ../tests
 
 TESTS = simple.test sort.test
 
-OBJFILES = Token.o Lexer.o Parser.o Exp.o Data.o \
-	   Error.o Interpreter.o main.o
+OBJFILES = Token.o Lexer.o Parser.o Exp.o Data.o Eval.o \
+	   Env.o Error.o Interpreter.o main.o
 
 # Compilation Rules
 

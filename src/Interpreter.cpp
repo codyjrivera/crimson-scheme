@@ -41,10 +41,36 @@ void Interpreter::readExp(Lexer& lex)
     
 }
 
+std::string Interpreter::dataToString(Data& result)
+{
+    if (result.isPrimitive())
+    {
+        return result.toString();
+    }
+    else
+    {
+        return "<compound data>";
+    }
+}
+
 std::string Interpreter::programToString()
 {
     return prettyPrint(*program);
 }
+
+void Interpreter::eval()
+{
+    if (program != NULL)
+    {
+        result = eval(*program, topEnv);
+    }
+}
+
+std::string Interpreter::resultToString()
+{
+    return dataToString(result);
+}
+
 
 void Interpreter::setOutput(std::ostream& stream) { output = &stream; }
 

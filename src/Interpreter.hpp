@@ -17,7 +17,8 @@
   NOTE - this class is implemented in several modules, as this class has
   several concerns, listed here
 
-  Interpreting - Eval.cpp
+  Evaluation is handled in Eval.cpp
+  
   Language Primitives and Run-Time Support - Language.cpp
   Pretty-Printing and Result Printing, Misc. - Interpreter.cpp
 
@@ -29,24 +30,27 @@ class Interpreter
 {
 private:
     Exp* program;
-    //std::list<Env*> envList;
-    // To add - procList, perhaps symList, definitely heap
+    Env topEnv;
     Data result;
-  
+
+    std::istream *input;
     std::ostream *output;
     std::ostream *aux;
 
     Exp* parseExp(Lexer& lex);
     Exp* parseMultipleExps(Lexer& lex);
     std::string prettyPrint(Exp& exp);
+
+    // Implementations of Evaluation in Eval.cpp
     Data eval(Exp& exp, Env& env);
     // TODO -- Add Apply when needed
     std::string dataToString(Data& result);
     // Here because sometimes printing requires additional context
     // that isn't provided by the Data class itself
+    
   
 public:
-    Interpreter(std::ostream& o = std::cout, std::ostream& a = std::cout) : program(NULL), output(&o), aux(&a)
+    Interpreter(std::istream& i = std::cin, std::ostream& o = std::cout, std::ostream& a = std::cout) : program(NULL), input(&i), output(&o), aux(&a)
     {
         //initInterpreter();
     }

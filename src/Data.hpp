@@ -9,6 +9,8 @@
 #include "Error.hpp"
 #include "Exp.hpp"
 
+class Interpreter;
+
 enum class DataType
 {
     // Primitive Data
@@ -35,7 +37,7 @@ struct Data
         bool booleanVal;
         long integerVal;
         double floatVal;
-        void (*primProcedureVal)(Data&, std::vector<Data>&);
+        void (*primProcedureVal)(Data&, std::vector<Data>&, Interpreter&);
     };
 
     // Constructors
@@ -44,7 +46,7 @@ struct Data
     Data(long i) : type(DataType::INTEGER), primitive(true), integerVal(i) {}
     Data(double f) : type(DataType::FLOAT), primitive(true), floatVal(f) {}
     Data(DataType t, std::string s = std::string("")) : type(t), primitive(true), text(s) {}
-    Data(std::string name, void (*p)(Data&, std::vector<Data>&))
+    Data(std::string name, void (*p)(Data&, std::vector<Data>&, Interpreter&))
         : type(DataType::PRIM_PROCEDURE), primitive(true), text(name), primProcedureVal(p)
     {
     }
@@ -55,7 +57,7 @@ struct Data
     static Data Float(double f) { return Data(f); }
     static Data Symbol(std::string s) { return Data(DataType::SYMBOL, s); }
     static Data String(std::string s) { return Data(DataType::STRING, s); }
-    static Data PrimProcedure(std::string name, void (*p)(Data&, std::vector<Data>&))
+    static Data PrimProcedure(std::string name, void (*p)(Data&, std::vector<Data>&, Interpreter&))
     {
         return Data(name, p);
     }

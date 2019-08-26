@@ -10,12 +10,14 @@ Go to src and type "make" to build, and ./cri-scm to run.
 
 ## Sample Programs
 
-1. (**begin**
-     *; variable definitions*
-     (**define** *x* 1)
-     (**define** *y* 2)
-     *; variable swap*
-     (**define** *temp* *x*)
-     (**set!** *x* *y*)
-     (**set!** *y* *temp*))
-
+Example 1.
+```scheme
+(begin
+  ; variable definitions
+  (define x 1)
+  (define y 2)
+  ; variable swap
+  (define temp x)
+  (set! x y)
+  (set! y temp))
+```

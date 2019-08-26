@@ -3,7 +3,19 @@ By Cody Rivera
 
 This is a simple tree-walk intepreter that implements the Scheme programming language.
 
-So far, a recursive-descent parser and a pretty printer have been implemented.
+So far, the basic special forms of Scheme have been implemented: **begin**, **if**,
+**define** (variables only), and **set!**, along with a loop construct **while**.
 
 Go to src and type "make" to build, and ./cri-scm to run.
+
+## Sample Programs
+
+1. (**begin**
+     *; variable definitions*
+     (**define** *x* 1)
+     (**define** *y* 2)
+     *; variable swap*
+     (**define** *temp* *x*)
+     (**set!** *x* *y*)
+     (**set!** *y* *temp*))
 

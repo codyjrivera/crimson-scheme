@@ -62,7 +62,7 @@ void Interpreter::eval()
 {
     if (program != NULL)
     {
-        result = eval(*program, topEnv);
+        result = eval(program, topEnv);
     }
 }
 

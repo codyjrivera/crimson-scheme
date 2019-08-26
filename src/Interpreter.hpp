@@ -42,7 +42,12 @@ private:
     std::string prettyPrint(Exp& exp);
 
     // Implementations of Evaluation in Eval.cpp
-    Data eval(Exp& exp, Env& env);
+    Data eval(Exp* exp, Env& env);
+    Data evalDefine(Exp* exp, Env& env);
+    Data evalSet(Exp* exp, Env& env);
+    Exp* evalIf(Exp* exp, Env& env);
+    Data evalWhile(Exp* exp, Env& env);
+    Exp* evalBegin(Exp* exp, Env& env);
     // TODO -- Add Apply when needed
     std::string dataToString(Data& result);
     // Here because sometimes printing requires additional context

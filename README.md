@@ -1,4 +1,4 @@
-# crimson-scheme -- A recursive Scheme interpreter written in C++.
+# crimson-scheme -- A tree-walk Scheme interpreter written in C++.
 By Cody Rivera
 
 This is a simple tree-walk intepreter that implements the Scheme programming language.

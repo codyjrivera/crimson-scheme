@@ -81,7 +81,26 @@ Data Interpreter::eval(Exp* exp, Env& env)
 
             if (!primEval)
             {
-                throw InterpreterError("Not an Expression", evalExp->getLine(), evalExp->getCol());
+                // Procedure Evaluation
+                Data proc = eval(evalExp->getLeft(), *evalEnv);
+                if (proc.type == DataType::PRIM_PROCEDURE)
+                {
+                    // Primitive Procedure Arguments
+                    std::vector<Data> args;
+                    Exp* argReader = evalExp->getRight();
+                    while (argReader != NULL && !argReader->isData())
+                    {
+                        args.push_back(eval(evalExp->getLeft(), *evalEnv));
+                        argReader = evalExp->getRight();
+                    }
+                    // Calls primitive procedure
+                    proc.primProcedureVal(result, args, *this);
+                    
+                }
+                else
+                {
+                    throw InterpreterError("Leftmost expression not a procedure", evalExp->getLine(), evalExp->getCol());
+                }
             }
         }
     }

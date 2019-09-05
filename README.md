@@ -1,4 +1,4 @@
-# crimson-scheme -- A recursive Scheme interpreter written in C++.
+# crimson-scheme -- A tree-walk Scheme interpreter written in C++.
 By Cody Rivera
 
 This is a simple tree-walk intepreter that implements the Scheme programming language.
@@ -6,7 +6,7 @@ This is a simple tree-walk intepreter that implements the Scheme programming lan
 So far, the basic special forms of Scheme have been implemented: **begin**, **if**,
 **define** (variables only), and **set!**, along with a loop construct **while**.
 
-Go to src and type "make" to build, and ./cri-scm to run.
+Go to *src* and type *"make"* to build, and *./cri-scm* to run.
 
 ## Sample Programs
 

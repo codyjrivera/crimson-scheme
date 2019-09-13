@@ -41,6 +41,20 @@ void Interpreter::readExp(Lexer& lex)
     
 }
 
+void Interpreter::readFile(Lexer& lex)
+{
+    Parser p;
+    if (program != NULL)
+    {
+        program->cleanup();
+        delete program;
+        program = NULL;
+    }
+    program = p.parseFile(lex);
+    
+}
+
+
 std::string Interpreter::dataToString(Data& result)
 {
     if (result.isPrimitive())

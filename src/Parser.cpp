@@ -172,7 +172,7 @@ Exp* Parser::parseNumber(Lexer& lex)
     long intValue;
     double floatValue;
 
-    if (strNumStream >> intValue)
+    if (tok.getValue().find('.') == std::string::npos && strNumStream >> intValue)
     {
         newExp = new Exp(Data::Integer(intValue), tok.getLine(), tok.getCol());
         allocNodes.push_back(newExp);

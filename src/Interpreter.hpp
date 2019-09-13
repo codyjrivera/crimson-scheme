@@ -57,7 +57,7 @@ private:
 public:
     Interpreter(std::istream& i = std::cin, std::ostream& o = std::cout, std::ostream& a = std::cout) : program(NULL), input(&i), output(&o), aux(&a)
     {
-        //initInterpreter();
+        initInterpreter();
     }
 
     ~Interpreter();
@@ -71,6 +71,11 @@ public:
     
     void setOutput(std::ostream& stream);
     void setAux(std::ostream& stream);
+
+    // Primitive Friend Functions
+    friend void primDisplay(Data& result, std::vector<Data>& args, Interpreter& interpreter);
+    friend void primNewline(Data& result, std::vector<Data>& args, Interpreter& interpreter);
+    
 };
 
 #endif

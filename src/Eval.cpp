@@ -90,8 +90,8 @@ Data Interpreter::eval(Exp* exp, Env& env)
                     Exp* argReader = evalExp->getRight();
                     while (argReader != NULL && !argReader->isData())
                     {
-                        args.push_back(eval(evalExp->getLeft(), *evalEnv));
-                        argReader = evalExp->getRight();
+                        args.push_back(eval(argReader->getLeft(), *evalEnv));
+                        argReader = argReader->getRight();
                     }
                     // Calls primitive procedure
                     proc.primProcedureVal(result, args, *this);

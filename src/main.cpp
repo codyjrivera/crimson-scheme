@@ -16,14 +16,29 @@
 #include "Interpreter.hpp"
 
 
-void runFile(std::istream& file);
+void runFile(Interpreter& i, std::istream& file);
 void repl(Interpreter& i);
 
 
-int main()
+int main(int argc, char** argv)
 {
     Interpreter main;
-    repl(main);
+    if (argc <= 1)
+    {
+        repl(main);
+    }
+    else
+    {
+        std::ifstream sourceFile(argv[1]);
+        if (!sourceFile)
+        {
+            std::cout << "Invalid file: " << argv[1] << std::endl;
+        }
+        else
+        {
+            runFile(main, sourceFile);
+        }
+    }
     return 0;
 }
 
@@ -52,6 +67,19 @@ void repl(Interpreter& i)
 }
 
 
+void runFile(Interpreter& i, std::istream& file)
+{
+    Lexer lexer(file);
+    try
+    {
+        i.readFile(lexer);
+        i.eval();
+    }
+    catch (InterpreterError& e)
+    {
+        std::cout << std::endl << e;
+    }
+}
 
 
 

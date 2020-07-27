@@ -1,9 +1,6 @@
 /* 
    main.c -- by Cody Rivera
    Copyright 2018 Cody Rivera
-   This program is distributed under the terms of the GNU GPL, version 3
-   or later. You should have recieved a copy of this license with this 
-   repository.
 
    cri-scm [file] [options]
    -v or --version -- Prints the version and quits

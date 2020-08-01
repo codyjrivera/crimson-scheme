@@ -13,15 +13,9 @@
 
 // Simple Environment Structure - Holds Variables and Primitive Values
 
-Env::Env() : marked(false) { top = parent = this; }
+Env::Env() { top = parent = this; }
 
-Env::Env(Env& p) : top(p.top), parent(&p), marked(false) {}
-
-void Env::mark() { marked = true; }
-
-bool Env::isMarked() const { return marked; }
-
-void Env::setMark(bool b) { marked = b; }
+Env::Env(Env& p) : top(p.top), parent(&p) {}
 
 Data Env::lookup(std::string identifier) const {
     try {
@@ -51,5 +45,13 @@ void Env::modify(std::string identifier, Data value) {
             throw InterpreterError(
                 identifier + std::string(" is not defined in this context"));
         }
+    }
+}
+
+std::string Env::toString() const {
+    if (parent == this) {
+        return "<top-level environment>";
+    } else {
+        return "<environment>";
     }
 }

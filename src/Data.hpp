@@ -41,7 +41,6 @@ struct Data {
         long integerVal;
         double floatVal;
         void (*primProcedureVal)(Data&, std::vector<Data>&, Interpreter&);
-        unsigned long pairIndex;
         HeapObject* object;
     };
 

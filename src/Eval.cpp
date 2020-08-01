@@ -74,7 +74,6 @@ Data Interpreter::eval(Exp* exp, Env& env) {
                     }
                     // Calls primitive procedure
                     proc.primProcedureVal(result, args, *this);
-
                 } else {
                     throw InterpreterError(
                         "Leftmost expression not a procedure",

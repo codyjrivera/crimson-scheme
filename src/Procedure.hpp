@@ -9,14 +9,13 @@
 #include "Env.hpp"
 #include "Error.hpp"
 #include "Exp.hpp"
+#include "HeapObject.hpp"
 
-class Procedure {
+class Procedure : public HeapObject {
    private:
     Env* parent;
     std::vector<std::string> formalParms;
     Exp* body;
-
-    bool marked;
 
    public:
     Procedure();
@@ -24,10 +23,6 @@ class Procedure {
 
     // Needed to deallocate the procedure body
     ~Procedure();
-
-    void mark();
-    bool isMarked() const;
-    void setMark(bool b);
 
     const Env& getParent() const;
     void setParent(Env& p);
@@ -37,6 +32,8 @@ class Procedure {
 
     Exp* getBody();
     void setBody(Exp* b);
+
+    std::string toString() const override;
 };
 
 #endif

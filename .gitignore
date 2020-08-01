@@ -2,3 +2,4 @@
 cri-scm
 *.out
 .clang-format
+.vscode

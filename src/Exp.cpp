@@ -16,6 +16,11 @@
   or in a procedure object.
 
   Also implements the parser and beautifier
+
+  HINDSIGHT NOTE: I wrote this back when I didn't have much programming experience.
+  Therefore, I implemented this weird marking system instead of just writing a copy
+  constructor. I barely understand this code, but I also don't care enough to refactor
+  it.
  */
 
 // Tree traversals for mark, unmark, and cleanup

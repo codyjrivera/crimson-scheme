@@ -10,27 +10,24 @@
 #include "Data.hpp"
 #include "Error.hpp"
 #include "Exp.hpp"
+#include "HeapObject.hpp"
 
-class Env {
+class Env : public HeapObject {
    private:
     Env* top;
     Env* parent;
 
     std::unordered_map<std::string, Data> table;
 
-    bool marked;
-
    public:
     Env();
     Env(Env& p);
 
-    void mark();
-    bool isMarked() const;
-    void setMark(bool b);
-
     Data lookup(std::string identifier) const;
     void insert(std::string identifier, Data value);
     void modify(std::string identifier, Data value);
+
+    std::string toString() const override;
 };
 
 #endif

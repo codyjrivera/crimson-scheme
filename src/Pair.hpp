@@ -6,7 +6,7 @@
 #include "Data.hpp"
 #include "HeapObject.hpp"
 
-class Pair : HeapObject {
+class Pair : public HeapObject {
    private:
     Data first, rest;
     std::string toStringNoParens() const;

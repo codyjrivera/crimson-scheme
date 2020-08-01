@@ -14,7 +14,7 @@ std::string Pair::toStringNoParens() const {
             break;
         // List in rest appends list to current list.
         case DataType::PAIR:
-            post = dynamic_cast<Pair*>(rest.object)->toStringNoParens();
+            post = static_cast<Pair*>(rest.object)->toStringNoParens();
             break;
         // Default 
         default:

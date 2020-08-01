@@ -76,6 +76,8 @@ class Interpreter {
                             Interpreter& interpreter);
     friend void primNewline(Data& result, std::vector<Data>& args,
                             Interpreter& interpreter);
+    friend void primCons(Data& result, std::vector<Data>& args,
+                         Interpreter& interpreter);
 };
 
 #endif

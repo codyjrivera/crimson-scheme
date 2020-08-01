@@ -50,11 +50,7 @@ void Interpreter::readFile(Lexer& lex) {
 }
 
 std::string Interpreter::dataToString(Data& result) {
-    if (result.isPrimitive()) {
-        return result.toString();
-    } else {
-        return "<compound data>";
-    }
+    return result.toString();
 }
 
 std::string Interpreter::programToString() { return prettyPrint(*program); }

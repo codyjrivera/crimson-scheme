@@ -9,6 +9,7 @@
 #include "Exp.hpp"
 #include "Interpreter.hpp"
 #include "Lexer.hpp"
+#include "Pair.hpp"
 #include "Token.hpp"
 
 /* Language Primitive Procedures
@@ -550,6 +551,16 @@ void primNewline(Data& result, std::vector<Data>& args,
     }
 }
 
+void primCons(Data& result, std::vector<Data>& args, Interpreter& interpreter) {
+    if (args.size() == 2) {
+        Pair* newPair = interpreter.heap.allocNewPair(args[0], args[1]);
+        result = Data::Pair(newPair);
+    } else {
+        throw InterpreterError(
+            "Primitive Procedure cons: must be called with two arguments");
+    }
+}
+
 void Interpreter::initInterpreter() {
     // Deposits primitive procedures
     topEnv.insert("+", Data::PrimProcedure("+", primAdd));
@@ -568,6 +579,7 @@ void Interpreter::initInterpreter() {
     topEnv.insert("=", Data::PrimProcedure("=", primEqual));
     topEnv.insert("display", Data::PrimProcedure("display", primDisplay));
     topEnv.insert("newline", Data::PrimProcedure("newline", primNewline));
+    topEnv.insert("cons", Data::PrimProcedure("cons", primCons));
 }
 
 long trueMod(long a, long b) {

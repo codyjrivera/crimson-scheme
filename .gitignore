@@ -1,3 +1,4 @@
 *.o
 cri-scm
 *.out
+.clang-format

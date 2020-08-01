@@ -1,41 +1,38 @@
 #ifndef _Interpeter_HPP
 #define _Interpeter_HPP
 
-
 #include <iostream>
-#include <string>
 #include <list>
-#include "Exp.hpp"
-#include "Env.hpp"
+#include <string>
+
 #include "Data.hpp"
+#include "Env.hpp"
+#include "Error.hpp"
+#include "Exp.hpp"
 #include "Lexer.hpp"
 #include "Token.hpp"
-#include "Error.hpp"
-
 
 /*
   NOTE - this class is implemented in several modules, as this class has
   several concerns, listed here
 
   Evaluation is handled in Eval.cpp
-  
+
   Language Primitives and Run-Time Support - Language.cpp
   Pretty-Printing and Result Printing, Misc. - Interpreter.cpp
 
   Other concerns are handled in member classes
  */
 
-
-class Interpreter
-{
-private:
+class Interpreter {
+   private:
     Exp* program;
     Env topEnv;
     Data result;
 
-    std::istream *input;
-    std::ostream *output;
-    std::ostream *aux;
+    std::istream* input;
+    std::ostream* output;
+    std::ostream* aux;
 
     Exp* parseExp(Lexer& lex);
     Exp* parseMultipleExps(Lexer& lex);
@@ -52,11 +49,11 @@ private:
     std::string dataToString(Data& result);
     // Here because sometimes printing requires additional context
     // that isn't provided by the Data class itself
-    
-  
-public:
-    Interpreter(std::istream& i = std::cin, std::ostream& o = std::cout, std::ostream& a = std::cout) : program(NULL), input(&i), output(&o), aux(&a)
-    {
+
+   public:
+    Interpreter(std::istream& i = std::cin, std::ostream& o = std::cout,
+                std::ostream& a = std::cout)
+        : program(NULL), input(&i), output(&o), aux(&a) {
         initInterpreter();
     }
 
@@ -68,14 +65,15 @@ public:
     std::string programToString();
     void eval();
     std::string resultToString();
-    
+
     void setOutput(std::ostream& stream);
     void setAux(std::ostream& stream);
 
     // Primitive Friend Functions
-    friend void primDisplay(Data& result, std::vector<Data>& args, Interpreter& interpreter);
-    friend void primNewline(Data& result, std::vector<Data>& args, Interpreter& interpreter);
-    
+    friend void primDisplay(Data& result, std::vector<Data>& args,
+                            Interpreter& interpreter);
+    friend void primNewline(Data& result, std::vector<Data>& args,
+                            Interpreter& interpreter);
 };
 
 #endif

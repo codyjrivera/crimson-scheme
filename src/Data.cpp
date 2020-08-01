@@ -1,28 +1,23 @@
+#include "Data.hpp"
+#include "Error.hpp"
+#include "Exp.hpp"
+#include "Lexer.hpp"
+#include <exception>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <exception>
-#include "Lexer.hpp"
-#include "Error.hpp"
-#include "Exp.hpp"
-#include "Data.hpp"
 
 /*
   Data Implementation
 
   The data-types in this program are implemented as a tagged union, wherever
   possible, of all the types considered.
-  
+
   Instead of holding advanced structures in itself, Data merely points to
   more advanced structures
  */
 
-
-bool Data::isPrimitive() const
-{
-    return primitive;
-}
-
+bool Data::isPrimitive() const { return primitive; }
 
 std::string Data::toString() const
 {
@@ -52,6 +47,9 @@ std::string Data::toString() const
         break;
     case DataType::PRIM_PROCEDURE:
         return std::string("<primitive-procedure ") + text + std::string(">");
+        break;
+    case DataType::NIL:
+        return std::string("()");
         break;
     default:
         return "Unspecified";

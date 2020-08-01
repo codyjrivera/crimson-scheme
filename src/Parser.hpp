@@ -1,19 +1,18 @@
 #ifndef _Parser_HPP
 #define _Parser_HPP
 
-#include <iostream>
-#include <string>
-#include <list>
 #include <exception>
-#include "Lexer.hpp"
+#include <iostream>
+#include <list>
+#include <string>
+
 #include "Data.hpp"
-#include "Exp.hpp"
 #include "Error.hpp"
+#include "Exp.hpp"
+#include "Lexer.hpp"
 
-
-class Parser
-{
-private:
+class Parser {
+   private:
     std::vector<Exp*> allocNodes;
     Exp* parsePrimitive(Lexer& lex);
     Exp* parseNumber(Lexer& lex);
@@ -23,12 +22,10 @@ private:
     Exp* parseCompoundExp(Lexer& lex);
     Exp* parseCompoundRest(Lexer& lex);
 
-    
-public:
+   public:
     // Parsing routines
     Exp* parseExp(Lexer& lex);
     Exp* parseFile(Lexer& lex);
 };
-
 
 #endif

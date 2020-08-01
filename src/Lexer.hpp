@@ -1,14 +1,14 @@
 #ifndef _Lexer_HPP
 #define _Lexer_HPP
 
-#include "Token.hpp"
 #include <iostream>
-#include <string>
 #include <sstream>
+#include <string>
 
-class Lexer
-{
-  private:
+#include "Token.hpp"
+
+class Lexer {
+   private:
     std::istream* inStream;
     long line;
     long col;
@@ -17,7 +17,7 @@ class Lexer
     bool saveToken;
     Token lexToken();
 
-  public:
+   public:
     Lexer();
     Lexer(std::istream& stream);
     ~Lexer();

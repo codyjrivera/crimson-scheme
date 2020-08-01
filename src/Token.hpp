@@ -7,8 +7,7 @@
 #include <iostream>
 #include <string>
 
-enum class TokenType
-{
+enum class TokenType {
     PAREN,
     DOT,
     QUOTE,
@@ -20,14 +19,13 @@ enum class TokenType
     END
 };
 
-class Token
-{
-  private:
+class Token {
+   private:
     TokenType tokenType;
     std::string value = std::string("");
     long line, col;
 
-  public:
+   public:
     // Essential member functions
     Token();
     Token(TokenType type, std::string val, long l, long c);
@@ -46,8 +44,6 @@ class Token
     std::string toString() const;
 };
 
-
 std::ostream& operator<<(std::ostream& stream, const Token& tok);
-
 
 #endif

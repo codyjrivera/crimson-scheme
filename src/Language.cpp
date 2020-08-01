@@ -23,6 +23,8 @@
 
    Phase 2:
    cons, car, cdr, set-car!, set-cdr!
+
+   TODO:
    read
 
  */
@@ -561,6 +563,74 @@ void primCons(Data& result, std::vector<Data>& args, Interpreter& interpreter) {
     }
 }
 
+void primCar(Data& result, std::vector<Data>& args, Interpreter& interpreter) {
+    (void)interpreter;
+
+    if (args.size() == 1) {
+        if (args[0].type == DataType::PAIR) {
+            result = static_cast<Pair*>(args[0].object)->getFirst();
+        } else {
+            throw InterpreterError(
+                "Primitive Procedure car: cannot take car of non-pair value");
+        }
+    } else {
+        throw InterpreterError(
+            "Primitive Procedure car: must be called with one argument");
+    }
+}
+
+void primCdr(Data& result, std::vector<Data>& args, Interpreter& interpreter) {
+    (void)interpreter;
+
+    if (args.size() == 1) {
+        if (args[0].type == DataType::PAIR) {
+            result = static_cast<Pair*>(args[0].object)->getRest();
+        } else {
+            throw InterpreterError(
+                "Primitive Procedure cdr: cannot take cdr of non-pair value");
+        }
+    } else {
+        throw InterpreterError(
+            "Primitive Procedure cdr: must be called with one argument");
+    }
+}
+
+void primSetCar(Data& result, std::vector<Data>& args,
+                Interpreter& interpreter) {
+    (void)interpreter;
+    (void)result;
+
+    if (args.size() == 2) {
+        if (args[0].type == DataType::PAIR) {
+            static_cast<Pair*>(args[0].object)->setFirst(args[1]);
+        } else {
+            throw InterpreterError(
+                "Primitive Procedure set-car!: first argument must be a pair");
+        }
+    } else {
+        throw InterpreterError(
+            "Primitive Procedure set-car!: must be called with two arguments");
+    }
+}
+
+void primSetCdr(Data& result, std::vector<Data>& args,
+                Interpreter& interpreter) {
+    (void)interpreter;
+    (void)result;
+
+    if (args.size() == 2) {
+        if (args[0].type == DataType::PAIR) {
+            static_cast<Pair*>(args[0].object)->setRest(args[1]);
+        } else {
+            throw InterpreterError(
+                "Primitive Procedure set-cdr!: first argument must be a pair");
+        }
+    } else {
+        throw InterpreterError(
+            "Primitive Procedure set-cdr!: must be called with two arguments");
+    }
+}
+
 void Interpreter::initInterpreter() {
     // Deposits primitive procedures
     topEnv.insert("+", Data::PrimProcedure("+", primAdd));
@@ -580,6 +650,10 @@ void Interpreter::initInterpreter() {
     topEnv.insert("display", Data::PrimProcedure("display", primDisplay));
     topEnv.insert("newline", Data::PrimProcedure("newline", primNewline));
     topEnv.insert("cons", Data::PrimProcedure("cons", primCons));
+    topEnv.insert("car", Data::PrimProcedure("car", primCar));
+    topEnv.insert("cdr", Data::PrimProcedure("cdr", primCdr));
+    topEnv.insert("set-car!", Data::PrimProcedure("set-car!", primSetCar));
+    topEnv.insert("set-cdr!", Data::PrimProcedure("set-cdr!", primSetCdr));
 }
 
 long trueMod(long a, long b) {

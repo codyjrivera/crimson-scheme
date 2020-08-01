@@ -46,7 +46,7 @@ struct Data {
     };
 
     // Constructors
-    Data() : type(DataType::UNDEFINED), primitive(false) {}
+    Data() : type(DataType::UNDEFINED), primitive(true) {}
     Data(bool b) : type(DataType::BOOLEAN), primitive(true), booleanVal(b) {}
     Data(long i) : type(DataType::INTEGER), primitive(true), integerVal(i) {}
     Data(double f) : type(DataType::FLOAT), primitive(true), floatVal(f) {}

@@ -47,6 +47,7 @@ class Interpreter {
     Exp* evalIf(Exp* exp, Env& env);
     Data evalWhile(Exp* exp, Env& env);
     Exp* evalBegin(Exp* exp, Env& env);
+    Data evalQuote(Exp* exp, Env& env);
     // TODO -- Add Apply when needed
     std::string dataToString(Data& result);
     // Here because sometimes printing requires additional context

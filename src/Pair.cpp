@@ -6,7 +6,7 @@
 
 std::string Pair::toStringNoParens() const {
     using namespace std;
-    string pre = first.toString() + " ";
+    string pre = first.toString();
     string post = "";
     switch (rest.type) {
         // Nil in rest terminates printing
@@ -14,11 +14,11 @@ std::string Pair::toStringNoParens() const {
             break;
         // List in rest appends list to current list.
         case DataType::PAIR:
-            post = static_cast<Pair*>(rest.object)->toStringNoParens();
+            post = " " + static_cast<Pair*>(rest.object)->toStringNoParens();
             break;
         // Default 
         default:
-            post = ". " + rest.toString();
+            post = " . " + rest.toString();
             break;
     }
     return pre + post;

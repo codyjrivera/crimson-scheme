@@ -7,8 +7,10 @@
 #include "Env.hpp"
 #include "Error.hpp"
 #include "Exp.hpp"
+#include "HeapObject.hpp"
 #include "Interpreter.hpp"
 #include "Lexer.hpp"
+#include "Pair.hpp"
 #include "Token.hpp"
 
 // Evaluation routine
@@ -53,6 +55,9 @@ Data Interpreter::eval(Exp* exp, Env& env) {
                     evalExp = evalBegin(evalExp->getRight(), *evalEnv);
                     primEval = true;
                     evalFlag = true;
+                } else if (symbol == "quote") {
+                    result = evalQuote(evalExp->getRight(), *evalEnv);
+                    primEval = true;
                 }
             }
 
@@ -230,4 +235,18 @@ Exp* Interpreter::evalBegin(Exp* exp, Env& env) {
         temp = temp->getRight();
     }
     return cont;
+}
+
+Data Interpreter::evalQuote(Exp* exp, Env& env) {
+    // Expression is null or edge case to deal with empty list (parsed as exp: null null) properly.
+    if (exp == NULL ||
+        (!exp->isData() && exp->getLeft() == NULL && exp->getRight() == NULL)) {
+        return Data::Nil();
+    } else if (exp->isData()) {
+        return exp->getData();
+    } else {
+        Pair* newPair = heap.allocNewPair(evalQuote(exp->getLeft(), env),
+                                          evalQuote(exp->getRight(), env));
+        return Data::Pair(newPair);
+    }
 }

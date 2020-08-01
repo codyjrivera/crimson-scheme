@@ -1,19 +1,19 @@
 #ifndef _Data_HPP
 #define _Data_HPP
 
-#include "Error.hpp"
-#include "Lexer.hpp"
 #include <exception>
 #include <iostream>
 #include <string>
 #include <vector>
 
+#include "Error.hpp"
+#include "Lexer.hpp"
+
 class Procedure;
 class Env;
 class Interpreter;
 
-enum class DataType
-{
+enum class DataType {
     // Primitive Data
     BOOLEAN,
     INTEGER,
@@ -30,14 +30,12 @@ enum class DataType
     ENVIRONMENT
 };
 
-struct Data
-{
+struct Data {
     DataType type;
     bool primitive;
     std::string text;
     // Union of primitive data types
-    union
-    {
+    union {
         bool booleanVal;
         long integerVal;
         double floatVal;
@@ -53,14 +51,12 @@ struct Data
     Data(long i) : type(DataType::INTEGER), primitive(true), integerVal(i) {}
     Data(double f) : type(DataType::FLOAT), primitive(true), floatVal(f) {}
     Data(DataType t, std::string s = std::string(""))
-        : type(t), primitive(true), text(s)
-    {
-    }
+        : type(t), primitive(true), text(s) {}
     Data(std::string name, void (*p)(Data&, std::vector<Data>&, Interpreter&))
-        : type(DataType::PRIM_PROCEDURE), primitive(true), text(name),
-          primProcedureVal(p)
-    {
-    }
+        : type(DataType::PRIM_PROCEDURE),
+          primitive(true),
+          text(name),
+          primProcedureVal(p) {}
 
     // Named Constructors
     static Data Boolean(bool b) { return Data(b); }
@@ -70,8 +66,7 @@ struct Data
     static Data String(std::string s) { return Data(DataType::STRING, s); }
     static Data PrimProcedure(std::string name,
                               void (*p)(Data&, std::vector<Data>&,
-                                        Interpreter&))
-    {
+                                        Interpreter&)) {
         return Data(name, p);
     }
     static Data Nil() { return Data(DataType::NIL, "()"); }

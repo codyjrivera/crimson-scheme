@@ -1,76 +1,61 @@
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <exception>
-#include "Lexer.hpp"
-#include "Error.hpp"
 #include "Exp.hpp"
 
+#include <exception>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include "Error.hpp"
+#include "Lexer.hpp"
 
 /*
-  Expression Implementation - Implemented as a 'cons cell' style data structure, with
-  left and right descendants.
-  
+  Expression Implementation - Implemented as a 'cons cell' style data structure,
+  with left and right descendants.
+
   Carries two mark variables to indicate the expressions usage either in the AST
   or in a procedure object.
 
   Also implements the parser and beautifier
  */
 
-
 // Tree traversals for mark, unmark, and cleanup
-void Exp::expMark()
-{
+void Exp::expMark() {
     mark = true;
-    if (!dataFlag)
-    {
-        if (leftExp != NULL)
-        {
+    if (!dataFlag) {
+        if (leftExp != NULL) {
             leftExp->expMark();
         }
-        if (rightExp != NULL)
-        {
+        if (rightExp != NULL) {
             rightExp->expMark();
         }
     }
 }
 
-
-void Exp::expUnmark()
-{
+void Exp::expUnmark() {
     mark = false;
-    if (!dataFlag)
-    {
-        if (leftExp != NULL)
-        {
+    if (!dataFlag) {
+        if (leftExp != NULL) {
             leftExp->expUnmark();
         }
-        if (rightExp != NULL)
-        {
+        if (rightExp != NULL) {
             rightExp->expUnmark();
         }
     }
 }
 
-
-void Exp::cleanup()
-{
+void Exp::cleanup() {
     expUnmark();
-    if (!proc)
-    {
-        if (!dataFlag)
-        {
-            if (leftExp != NULL)
-            {
+    if (!proc) {
+        if (!dataFlag) {
+            if (leftExp != NULL) {
                 leftExp->cleanup();
             }
-            if (rightExp != NULL)
-            {
+            if (rightExp != NULL) {
                 rightExp->cleanup();
             }
             delete leftExp;
             delete rightExp;
-        }   
+        }
     }
 }
 
@@ -94,10 +79,3 @@ void Exp::setLine(long r) { line = r; }
 
 long Exp::getCol() const { return col; }
 void Exp::setCol(long c) { col = c; }
-
-
-
-
-
-
-

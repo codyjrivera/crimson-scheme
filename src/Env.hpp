@@ -2,25 +2,25 @@
 #define _Env_HPP
 
 #include <iostream>
-#include <string>
 #include <memory>
-#include <vector>
+#include <string>
 #include <unordered_map>
-#include "Exp.hpp"
+#include <vector>
+
 #include "Data.hpp"
 #include "Error.hpp"
+#include "Exp.hpp"
 
-class Env
-{
-private:
+class Env {
+   private:
     Env* top;
     Env* parent;
 
     std::unordered_map<std::string, Data> table;
-    
+
     bool marked;
-    
-public:
+
+   public:
     Env();
     Env(Env& p);
 

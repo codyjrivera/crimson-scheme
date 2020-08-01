@@ -9,6 +9,7 @@
 #include "Env.hpp"
 #include "Error.hpp"
 #include "Exp.hpp"
+#include "Heap.hpp"
 #include "Lexer.hpp"
 #include "Token.hpp"
 
@@ -28,6 +29,7 @@ class Interpreter {
    private:
     Exp* program;
     Env topEnv;
+    Heap heap;
     Data result;
 
     std::istream* input;

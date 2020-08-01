@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Error.hpp"
+#include "HeapObject.hpp"
 #include "Lexer.hpp"
 
 class Procedure;
@@ -41,8 +42,7 @@ struct Data {
         double floatVal;
         void (*primProcedureVal)(Data&, std::vector<Data>&, Interpreter&);
         unsigned long pairIndex;
-        // Procedure* procVal;
-        Env* envVal;
+        HeapObject* object;
     };
 
     // Constructors
@@ -57,6 +57,7 @@ struct Data {
           primitive(true),
           text(name),
           primProcedureVal(p) {}
+    Data(DataType t, HeapObject* obj) : type(t), primitive(false), object(obj) {}
 
     // Named Constructors
     static Data Boolean(bool b) { return Data(b); }
@@ -70,6 +71,7 @@ struct Data {
         return Data(name, p);
     }
     static Data Nil() { return Data(DataType::NIL, "()"); }
+    static Data Pair(HeapObject* pair) { return Data(DataType::PAIR, pair); }
 
     bool isPrimitive() const;
     std::string toString() const;

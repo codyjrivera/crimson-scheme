@@ -22,6 +22,9 @@
 bool Data::isPrimitive() const { return primitive; }
 
 std::string Data::toString() const {
+    if (!primitive) {
+        return object->toString();
+    }
     switch (type) {
         case DataType::BOOLEAN:
             if (booleanVal == false) {

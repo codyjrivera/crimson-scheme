@@ -9,10 +9,10 @@
 #include "Error.hpp"
 #include "Exp.hpp"
 
-Procedure::Procedure() : parent(NULL), body(NULL), marked(false) {}
+Procedure::Procedure() : parent(NULL), body(NULL) {}
 
 Procedure::Procedure(Env& p, std::vector<std::string>& parms, Exp* b)
-    : parent(&p), formalParms(parms), body(b), marked(false) {
+    : parent(&p), formalParms(parms), body(b) {
     if (body != NULL) {
         body->setProc(true);
     }

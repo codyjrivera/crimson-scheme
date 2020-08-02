@@ -654,6 +654,10 @@ void Interpreter::initInterpreter() {
     topEnv.insert("cdr", Data::PrimProcedure("cdr", primCdr));
     topEnv.insert("set-car!", Data::PrimProcedure("set-car!", primSetCar));
     topEnv.insert("set-cdr!", Data::PrimProcedure("set-cdr!", primSetCdr));
+
+    // Sets up GC
+    heap.setRoot(topEnv);
+    heap.setThreshold(10000);
 }
 
 long trueMod(long a, long b) {

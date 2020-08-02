@@ -21,6 +21,8 @@ class Pair : public HeapObject {
     void setRest(Data r) { rest = r; }
 
     std::string toString() const override;
+
+    void mark() override;
 };
 
 #endif

@@ -34,6 +34,8 @@ class Procedure : public HeapObject {
     void setBody(Exp* b);
 
     std::string toString() const override;
+
+    void mark() override;
 };
 
 #endif

@@ -28,6 +28,8 @@ class Env : public HeapObject {
     void modify(std::string identifier, Data value);
 
     std::string toString() const override;
+
+    void mark() override;
 };
 
 #endif

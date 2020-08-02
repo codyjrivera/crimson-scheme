@@ -55,3 +55,14 @@ std::string Env::toString() const {
         return "<environment>";
     }
 }
+
+void Env::mark() {
+    markFlag = true;
+    for (std::pair<std::string, Data> entry : table) {
+        if (!entry.second.isPrimitive()) {
+            if (!entry.second.object->isMarked()) {
+                entry.second.object->mark();
+            }
+        }
+    }
+}

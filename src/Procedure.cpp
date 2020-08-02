@@ -47,3 +47,9 @@ std::string Procedure::toString() const {
     result += ")>";
     return result;
 }
+
+void Procedure::mark() {
+    if (!parent->isMarked()) {
+        parent->mark();
+    }
+}

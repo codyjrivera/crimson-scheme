@@ -58,3 +58,13 @@ std::string Pair::toString() const {
     visited.insert(this);
     return toStringHelper(visited);
 }
+
+void Pair::mark() {
+    markFlag = true;
+    if (!first.isPrimitive() && !first.object->isMarked()) {
+        first.object->mark();
+    }
+    if (!rest.isPrimitive() && !rest.object->isMarked()) {
+        rest.object->mark();
+    }
+}

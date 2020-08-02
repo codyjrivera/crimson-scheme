@@ -58,6 +58,9 @@ Data Interpreter::eval(Exp* exp, Env& env) {
                 } else if (symbol == "quote") {
                     result = evalQuote(evalExp->getRight(), *evalEnv);
                     primEval = true;
+                } else if (symbol == "lambda") {
+                    result = evalLambda(evalExp, *evalEnv);
+                    primEval = true;
                 }
             }
 
@@ -74,6 +77,38 @@ Data Interpreter::eval(Exp* exp, Env& env) {
                     }
                     // Calls primitive procedure
                     proc.primProcedureVal(result, args, *this);
+                } else if (proc.type == DataType::PROCEDURE) {
+                    Procedure* closure = static_cast<Procedure*>(proc.object);
+
+                    // Read args
+                    std::vector<Data> args;
+                    Exp* argReader = evalExp->getRight();
+                    while (argReader != NULL && !argReader->isData()) {
+                        args.push_back(eval(argReader->getLeft(), *evalEnv));
+                        argReader = argReader->getRight();
+                    }
+
+                    // Match args
+                    if (args.size() != closure->getParms().size()) {
+                        throw InterpreterError(
+                            "Mismatching Arity: Called " +
+                            std::to_string(closure->getParms().size()) +
+                            "-ary procedure with " +
+                            std::to_string(args.size()) + " args");
+                    }
+
+                    // New Environment
+                    Env* newEnv = heap.allocNewEnv(closure->getParent());
+                    for (size_t i = 0; i < args.size(); ++i) {
+                        newEnv->insert(closure->getParms()[i], args[i]);
+                    }
+
+                    // Eval body in new env
+                    evalExp = evalBegin(closure->getBody(), *newEnv);
+                    evalFlag = true;
+
+                    // Replace old env with new env for tail call
+                    evalEnv = newEnv;
                 } else {
                     throw InterpreterError(
                         "Leftmost expression not a procedure",
@@ -108,7 +143,17 @@ Data Interpreter::evalDefine(Exp* exp, Env& env) {
                         status = true;
                     }
                 } else {
-                    // Define syntactic sugar
+                    // Try to evaluate as a procedure
+                    if (temp->getLeft() != NULL && !temp->getLeft()->isData() &&
+                        temp->getLeft()->getLeft() != NULL &&
+                        temp->getLeft()->getLeft()->getData().type ==
+                            DataType::SYMBOL) {
+                        value = evalProcedure(temp->getLeft()->getRight(),
+                                              temp->getRight(), env);
+                        env.insert(temp->getLeft()->getLeft()->getData().text,
+                                   value);
+                        status = true;
+                    }
                 }
             }
         }
@@ -237,15 +282,63 @@ Exp* Interpreter::evalBegin(Exp* exp, Env& env) {
 }
 
 Data Interpreter::evalQuote(Exp* exp, Env& env) {
-    // Expression is null or edge case to deal with empty list (parsed as exp: null null) properly.
+    // Expression is null or edge case to deal with empty list (parsed as exp:
+    // null null) properly.
+    Data value;
     if (exp == NULL ||
         (!exp->isData() && exp->getLeft() == NULL && exp->getRight() == NULL)) {
-        return Data::Nil();
+        value = Data::Nil();
     } else if (exp->isData()) {
-        return exp->getData();
+        value = exp->getData();
     } else {
         Pair* newPair = heap.allocNewPair(evalQuote(exp->getLeft(), env),
                                           evalQuote(exp->getRight(), env));
-        return Data::Pair(newPair);
+        value = Data::Pair(newPair);
     }
+    return value;
+}
+
+Data Interpreter::evalLambda(Exp* exp, Env& env) {
+    bool status = false;
+    std::string id;
+    Data value;
+    Exp* temp;
+    if (exp != NULL) {
+        if (exp->getRight() != NULL) {
+            temp = exp->getRight();
+            if (temp->getLeft() != NULL && temp->getRight() != NULL) {
+                value = evalProcedure(temp->getLeft(), temp->getRight(), env);
+                status = true;
+            }
+        }
+    }
+    if (status) {
+        return value;
+    } else {
+        throw InterpreterError("Malformed Lambda Expression", exp->getLine(),
+                               exp->getCol());
+    }
+}
+
+Data Interpreter::evalProcedure(Exp* args, Exp* body, Env& env) {
+    Data value;
+    std::vector<std::string> paramNames;
+    Exp* argReader = args;
+    while (argReader != NULL && !argReader->isData()) {
+        if (argReader->getLeft()->isData() &&
+            argReader->getLeft()->getData().type == DataType::SYMBOL) {
+            paramNames.push_back(argReader->getLeft()->getData().text);
+        } else {
+            throw InterpreterError("Malformed argument list",
+                                   argReader->getLine(), argReader->getCol());
+        }
+        argReader = argReader->getRight();
+    }
+    if (argReader != NULL && argReader->isData()) {
+        throw InterpreterError("Dot arguments unsupported",
+                               argReader->getLine(), argReader->getCol());
+    }
+    Procedure* proc = heap.allocNewProcedure(env, paramNames, body);
+    value = Data::Procedure(proc);
+    return value;
 }

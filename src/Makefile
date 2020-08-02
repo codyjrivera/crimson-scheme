@@ -13,7 +13,7 @@ TESTDIR = ../tests
 TESTS = simple.test sort.test
 
 OBJFILES = Token.o Lexer.o Parser.o Exp.o Data.o Eval.o \
-	   Env.o Error.o Interpreter.o Language.o Heap.o Pair.o main.o
+	   Env.o Error.o Interpreter.o Language.o Heap.o Pair.o Procedure.o main.o
 
 # Compilation Rules
 

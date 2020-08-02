@@ -24,7 +24,7 @@ class Procedure : public HeapObject {
     // Needed to deallocate the procedure body
     ~Procedure();
 
-    const Env& getParent() const;
+    Env& getParent();
     void setParent(Env& p);
 
     const std::vector<std::string>& getParms();

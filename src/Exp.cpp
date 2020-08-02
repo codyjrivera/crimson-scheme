@@ -19,8 +19,8 @@
 
   HINDSIGHT NOTE: I wrote this back when I didn't have much programming experience.
   Therefore, I implemented this weird marking system instead of just writing a copy
-  constructor. I barely understand this code, but I also don't care enough to refactor
-  it.
+  constructor. I barely understand this code, but I also don't care enough to refactor.
+  In fact, I just found and fixed a weird bug.
  */
 
 // Tree traversals for mark, unmark, and cleanup
@@ -52,14 +52,14 @@ void Exp::cleanup() {
     expUnmark();
     if (!proc) {
         if (!dataFlag) {
-            if (leftExp != NULL) {
+            if (leftExp != NULL && !leftExp->isProc()) {
                 leftExp->cleanup();
+                delete leftExp;
             }
-            if (rightExp != NULL) {
+            if (rightExp != NULL && !rightExp->isProc()) {
                 rightExp->cleanup();
+                delete rightExp;
             }
-            delete leftExp;
-            delete rightExp;
         }
     }
 }

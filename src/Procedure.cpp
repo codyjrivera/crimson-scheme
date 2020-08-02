@@ -25,6 +25,17 @@ Procedure::~Procedure() {
     }
 }
 
+Env& Procedure::getParent() { return *parent; }
+void Procedure::setParent(Env& p) { parent = &p; }
+
+const std::vector<std::string>& Procedure::getParms() { return formalParms; }
+void Procedure::setParms(std::vector<std::string>& parms) {
+    formalParms = parms;
+}
+
+Exp* Procedure::getBody() { return body; }
+void Procedure::setBody(Exp* b) { body = b; }
+
 std::string Procedure::toString() const {
     using namespace std;
     string result = "<compound-procedure ";

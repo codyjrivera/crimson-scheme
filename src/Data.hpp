@@ -56,7 +56,8 @@ struct Data {
           primitive(true),
           text(name),
           primProcedureVal(p) {}
-    Data(DataType t, HeapObject* obj) : type(t), primitive(false), object(obj) {}
+    Data(DataType t, HeapObject* obj)
+        : type(t), primitive(false), object(obj) {}
 
     // Named Constructors
     static Data Boolean(bool b) { return Data(b); }
@@ -71,6 +72,12 @@ struct Data {
     }
     static Data Nil() { return Data(DataType::NIL, "()"); }
     static Data Pair(HeapObject* pair) { return Data(DataType::PAIR, pair); }
+    static Data Procedure(HeapObject* proc) {
+        return Data(DataType::PROCEDURE, proc);
+    }
+    static Data Environment(HeapObject* env) {
+        return Data(DataType::ENVIRONMENT, env);
+    }
 
     bool isPrimitive() const;
     std::string toString() const;

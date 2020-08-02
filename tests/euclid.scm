@@ -1,17 +1,14 @@
-; Constant Definitions
 (define A 111)
 (define B 259)
 
-; Program Body 
-(define a A)
-(define b B)
-
 ; Euclid's Algorithm
-(while (not (= a b))
-       (if (< a b)
-           (set! b (- b a))
-           (set! a (- a b))))
+(define (gcd a b)
+  (if (= a b)
+      a ; or b, this is arbitrary
+      (if (< a b)
+          (gcd a (- b a))
+          (gcd (- a b) b))))
 
-; a = b = GCD(A, B)
-(display (div (+ a b) 2))
+; GCD(A, B) = 37
+(display (gcd A B))
 (newline)

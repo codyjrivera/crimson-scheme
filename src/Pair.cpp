@@ -1,12 +1,29 @@
 #include "Pair.hpp"
 
+#include <set>
 #include <string>
 
 #include "Data.hpp"
 
-std::string Pair::toStringNoParens() const {
+std::string Pair::toStringNoParens(std::set<const HeapObject*>& visited) const {
     using namespace std;
-    string pre = first.toString();
+    string pre = "";
+    switch (first.type) {
+        case DataType::PAIR:
+            if (visited.find(first.object) == visited.end()) {
+                // New object
+                visited.insert(first.object);
+                pre =
+                    " " +
+                    static_cast<Pair*>(first.object)->toStringHelper(visited);
+            } else {
+                pre = "CIRC-REF";
+            }
+            break;
+        default:
+            pre = first.toString();
+            break;
+    }
     string post = "";
     switch (rest.type) {
         // Nil in rest terminates printing
@@ -14,9 +31,17 @@ std::string Pair::toStringNoParens() const {
             break;
         // List in rest appends list to current list.
         case DataType::PAIR:
-            post = " " + static_cast<Pair*>(rest.object)->toStringNoParens();
+            if (visited.find(rest.object) == visited.end()) {
+                // New object
+                visited.insert(rest.object);
+                post =
+                    " " +
+                    static_cast<Pair*>(rest.object)->toStringNoParens(visited);
+            } else {
+                post = " CIRC-REF";
+            }
             break;
-        // Default 
+        // Default
         default:
             post = " . " + rest.toString();
             break;
@@ -24,6 +49,12 @@ std::string Pair::toStringNoParens() const {
     return pre + post;
 }
 
+std::string Pair::toStringHelper(std::set<const HeapObject*>& visited) const {
+    return "(" + toStringNoParens(visited) + ")";
+}
+
 std::string Pair::toString() const {
-    return "(" + toStringNoParens() + ")";
+    std::set<const HeapObject*> visited;
+    visited.insert(this);
+    return toStringHelper(visited);
 }

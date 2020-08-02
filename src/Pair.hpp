@@ -1,6 +1,7 @@
 #ifndef Pair_HPP
 #define Pair_HPP
 
+#include <set>
 #include <string>
 
 #include "Data.hpp"
@@ -9,7 +10,8 @@
 class Pair : public HeapObject {
    private:
     Data first, rest;
-    std::string toStringNoParens() const;
+    std::string toStringNoParens(std::set<const HeapObject*>& visited) const;
+    std::string toStringHelper(std::set<const HeapObject*>& visited) const;
 
    public:
     Pair(Data f, Data r) : first(f), rest(r) {}

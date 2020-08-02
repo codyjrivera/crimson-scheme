@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "Data.hpp"
 #include "Env.hpp"
 #include "Error.hpp"
 #include "Exp.hpp"
@@ -36,6 +37,23 @@ void Procedure::setParms(std::vector<std::string>& parms) {
 Exp* Procedure::getBody() { return body; }
 void Procedure::setBody(Exp* b) { body = b; }
 
+void Procedure::makeVariadic(std::string parm) {
+    variadicFlag = true;
+    variadicParm = parm;
+}
+
+bool Procedure::isVariadic() const {
+    return variadicFlag;
+}
+
+std::string Procedure::getVariadicParm() const {
+    return variadicParm;
+}
+
+void Procedure::makeNonVariadic() {
+    variadicFlag = false;
+}
+
 std::string Procedure::toString() const {
     using namespace std;
     string result = "<compound-procedure ";
@@ -44,7 +62,11 @@ std::string Procedure::toString() const {
         result += parm;
         result += " ";
     }
-    result += ")>";
+    result += ")";
+    if (variadicFlag) {
+        result += " (variadic: " + variadicParm + ")";
+    }
+    result += ">";
     return result;
 }
 

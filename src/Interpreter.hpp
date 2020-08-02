@@ -52,6 +52,7 @@ class Interpreter {
     Data evalProcedure(Exp* args, Exp* body, Env& env);
     // TODO -- Add Apply when needed
     std::string dataToString(Data& result);
+    Data toSchemeList(std::vector<Data> list);
     // Here because sometimes printing requires additional context
     // that isn't provided by the Data class itself
 

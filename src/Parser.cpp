@@ -24,9 +24,14 @@
 
   Grammar:
   File  ->  Exp File | Empty (NOTE - (begin E) will be wrapped around parsed
-  files) Exp   ->  Boolean | Number | String | Symbol | QExp | HExp | SExp |
-  Empty QExp  ->  ' Exp HExp  ->  '#' Exp SExp  ->  '(' CExp ')' CExp  ->  Exp
-  RCExp | Empty RCExp ->  Exp RCExp | '.' Exp | Empty
+  files)
+  Exp   ->  Boolean | Number | String | Symbol | QExp | HExp | SExp |
+            Empty
+  QExp  ->  ' Exp
+  HExp  ->  '#' Exp
+  SExp  ->  '(' CExp ')'
+  CExp  ->  Exp RCExp | '.' Exp | Empty
+  RCExp ->  Exp RCExp | '.' Exp | Empty
 
  */
 
@@ -218,9 +223,8 @@ Exp* Parser::parseCompoundExp(Lexer& lex) {
     } else {
         tok = lex.peek();
         if (tok.getType() == TokenType::DOT) {
-            throw InterpreterError(
-                "Dot cannot be placed as first element of compound statement",
-                tok.getLine(), tok.getCol());
+            lex.next();
+            newExp->setRight(parseExp(lex));
         }
     }
     return newExp;
@@ -247,9 +251,7 @@ Exp* Parser::parseCompoundRest(Lexer& lex) {
         lex.next();
         parsedExp = parseExp(lex);
         if (parsedExp != NULL) {
-            currentExp->setRight(
-                new Exp(parsedExp, parsedExp->getLine(), parsedExp->getCol()));
-            allocNodes.push_back(currentExp->getRight());
+            currentExp->setRight(parsedExp);
         } else {
             throw InterpreterError("Expression required after dot",
                                    tok.getLine(), tok.getCol());

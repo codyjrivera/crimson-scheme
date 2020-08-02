@@ -15,6 +15,8 @@ class Procedure : public HeapObject {
    private:
     Env* parent;
     std::vector<std::string> formalParms;
+    bool variadicFlag;
+    std::string variadicParm;
     Exp* body;
 
    public:
@@ -32,6 +34,11 @@ class Procedure : public HeapObject {
 
     Exp* getBody();
     void setBody(Exp* b);
+
+    void makeVariadic(std::string variadicParm);
+    bool isVariadic() const;
+    std::string getVariadicParm() const;
+    void makeNonVariadic();
 
     std::string toString() const override;
 

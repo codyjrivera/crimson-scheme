@@ -89,7 +89,7 @@ Data Interpreter::eval(Exp* exp, Env& env) {
                     }
 
                     // Match args
-                    if (args.size() != closure->getParms().size()) {
+                    if (args.size() < closure->getParms().size()) {
                         throw InterpreterError(
                             "Mismatching Arity: Called " +
                             std::to_string(closure->getParms().size()) +
@@ -97,10 +97,32 @@ Data Interpreter::eval(Exp* exp, Env& env) {
                             std::to_string(args.size()) + " args");
                     }
 
+                    // Variadic arguments
+                    Data varArgsList = Data::Nil();
+                    if (args.size() > closure->getParms().size()) {
+                        if (closure->isVariadic()) {
+                            std::vector<Data> varArgs;
+                            size_t i = closure->getParms().size();
+                            for (; i < args.size(); ++i) {
+                                varArgs.push_back(args[i]);
+                            }
+                            varArgsList = toSchemeList(varArgs);
+                        } else {
+                            throw InterpreterError(
+                                "Oversupplied nonvariadic procedure: Called " +
+                                std::to_string(closure->getParms().size()) +
+                                "-ary procedure with " +
+                                std::to_string(args.size()) + " args");
+                        }
+                    }
+
                     // New Environment
                     Env* newEnv = heap.allocNewEnv(closure->getParent());
-                    for (size_t i = 0; i < args.size(); ++i) {
+                    for (size_t i = 0; i < closure->getParms().size(); ++i) {
                         newEnv->insert(closure->getParms()[i], args[i]);
+                    }
+                    if (closure->isVariadic()) {
+                        newEnv->insert(closure->getVariadicParm(), varArgsList);
                     }
 
                     // Eval body in new env
@@ -324,7 +346,13 @@ Data Interpreter::evalProcedure(Exp* args, Exp* body, Env& env) {
     Data value;
     std::vector<std::string> paramNames;
     Exp* argReader = args;
+    bool variadic = false;
+    std::string variadicName;
     while (argReader != NULL && !argReader->isData()) {
+        // Special case -- Empty list in (lambda ())
+        if (argReader->getLeft() == NULL && argReader->getRight() == NULL) {
+            break;
+        }
         if (argReader->getLeft()->isData() &&
             argReader->getLeft()->getData().type == DataType::SYMBOL) {
             paramNames.push_back(argReader->getLeft()->getData().text);
@@ -335,10 +363,29 @@ Data Interpreter::evalProcedure(Exp* args, Exp* body, Env& env) {
         argReader = argReader->getRight();
     }
     if (argReader != NULL && argReader->isData()) {
-        throw InterpreterError("Dot arguments unsupported",
-                               argReader->getLine(), argReader->getCol());
+        if (argReader->getData().type == DataType::SYMBOL) {
+            variadic = true;
+            variadicName = argReader->getData().text;
+        } else {
+            throw InterpreterError("Malformed variadic argument",
+                                   argReader->getLine(), argReader->getCol());
+        }
     }
     Procedure* proc = heap.allocNewProcedure(env, paramNames, body);
+    if (variadic) {
+        proc->makeVariadic(variadicName);
+    }
     value = Data::Procedure(proc);
     return value;
+}
+
+Data Interpreter::toSchemeList(std::vector<Data> list) {
+    using namespace std;
+    Data result = Data::Nil();
+    vector<Data>::reverse_iterator iter = list.rbegin();
+    while (iter != list.rend()) {
+        result = Data::Pair(heap.allocNewPair(*iter, result));
+        ++iter;
+    }
+    return result;
 }

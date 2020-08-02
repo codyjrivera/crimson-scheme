@@ -22,7 +22,8 @@
    min, max
 
    Phase 2:
-   cons, car, cdr, set-car!, set-cdr!
+   cons, car, cdr, set-car!, set-cdr!,
+   error
 
    TODO:
    read
@@ -631,6 +632,23 @@ void primSetCdr(Data& result, std::vector<Data>& args,
     }
 }
 
+void primError(Data& result, std::vector<Data>& args,
+               Interpreter& interpreter) {
+    (void) result;
+    (void) interpreter;
+
+    std::string message = "Runtime Error:";
+    for (Data arg : args) {
+        message += "\n";
+        if (arg.type == DataType::STRING) {
+            message += arg.text;
+        } else {
+            message += arg.toString();
+        }
+    }
+    throw InterpreterError(message);
+}
+
 void Interpreter::initInterpreter() {
     // Deposits primitive procedures
     topEnv.insert("+", Data::PrimProcedure("+", primAdd));
@@ -654,6 +672,7 @@ void Interpreter::initInterpreter() {
     topEnv.insert("cdr", Data::PrimProcedure("cdr", primCdr));
     topEnv.insert("set-car!", Data::PrimProcedure("set-car!", primSetCar));
     topEnv.insert("set-cdr!", Data::PrimProcedure("set-cdr!", primSetCdr));
+    topEnv.insert("error", Data::PrimProcedure("error", primError));
 
     // Sets up GC
     heap.setRoot(topEnv);

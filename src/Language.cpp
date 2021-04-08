@@ -244,40 +244,6 @@ void primMod(Data& result, std::vector<Data>& args, Interpreter& interpreter) {
     }
 }
 
-// NOTE : The false object is false, all other objects are true
-
-void primAnd(Data& result, std::vector<Data>& args, Interpreter& interpreter) {
-    (void)interpreter;
-
-    bool isTrue = true;
-    unsigned long i;
-
-    for (i = 0; i < args.size() && isTrue; ++i) {
-        if (args[i].type == DataType::BOOLEAN && args[i].booleanVal == false) {
-            isTrue = false;
-        }
-    }
-
-    result = Data::Boolean(isTrue);
-}
-
-void primOr(Data& result, std::vector<Data>& args, Interpreter& interpreter) {
-    (void)interpreter;
-
-    bool isTrue = false;
-    unsigned long i;
-
-    for (i = 0; i < args.size() && !isTrue; ++i) {
-        if (args[i].type == DataType::BOOLEAN && args[i].booleanVal == false) {
-            isTrue = false;
-        } else {
-            isTrue = true;
-        }
-    }
-
-    result = Data::Boolean(isTrue);
-}
-
 void primNot(Data& result, std::vector<Data>& args, Interpreter& interpreter) {
     (void)interpreter;
 
@@ -657,8 +623,6 @@ void Interpreter::initInterpreter() {
     topEnv.insert("/", Data::PrimProcedure("/", primFloatDiv));
     topEnv.insert("div", Data::PrimProcedure("div", primDiv));
     topEnv.insert("mod", Data::PrimProcedure("mod", primMod));
-    topEnv.insert("and", Data::PrimProcedure("and", primAnd));
-    topEnv.insert("or", Data::PrimProcedure("or", primOr));
     topEnv.insert("not", Data::PrimProcedure("not", primNot));
     topEnv.insert(">", Data::PrimProcedure(">", primGreaterThan));
     topEnv.insert("<", Data::PrimProcedure("<", primLessThan));

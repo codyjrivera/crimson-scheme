@@ -61,6 +61,18 @@ Data Interpreter::eval(Exp* exp, Env& env) {
                 } else if (symbol == "lambda") {
                     result = evalLambda(evalExp, *evalEnv);
                     primEval = true;
+                } else if (symbol == "and") {
+                    // If not short-circuited
+                    if (!evalAnd(evalExp->getRight(), *evalEnv, evalExp, result)) {
+                        evalFlag = true;
+                    }
+                    primEval = true;
+                } else if (symbol == "or") {
+                    // If not short-circuited
+                    if (!evalOr(evalExp->getRight(), *evalEnv, evalExp, result)) {
+                        evalFlag = true;
+                    }
+                    primEval = true;
                 }
             }
 
@@ -340,6 +352,46 @@ Data Interpreter::evalLambda(Exp* exp, Env& env) {
         throw InterpreterError("Malformed Lambda Expression", exp->getLine(),
                                exp->getCol());
     }
+}
+
+// Returns true if the expression short-circuits, placing the output in result
+// Otherwise returns false, placing the last subexpression in evalExp
+bool Interpreter::evalAnd(Exp* exp, Env& env, Exp*& evalExp, Data& result) {
+    Exp* cont = NULL;
+    Exp* temp = exp;
+    while (temp != NULL && !temp->isData()) {
+        if (cont != NULL) {
+            Data d = eval(cont, env);
+            if (d.type == DataType::BOOLEAN && d.booleanVal == false) {
+                result = d;
+                return true;
+            }
+        }
+        cont = temp->getLeft();
+        temp = temp->getRight();
+    }
+    evalExp = cont;
+    return false;
+}
+
+// Returns true if the expression short-circuits, placing the output in result
+// Otherwise returns false, placing the last subexpression in evalExp
+bool Interpreter::evalOr(Exp* exp, Env& env, Exp*& evalExp, Data& result) {
+    Exp* cont = NULL;
+    Exp* temp = exp;
+    while (temp != NULL && !temp->isData()) {
+        if (cont != NULL) {
+            Data d = eval(cont, env);
+            if (d.type != DataType::BOOLEAN || d.booleanVal != false) {
+                result = d;
+                return true;
+            }
+        }
+        cont = temp->getLeft();
+        temp = temp->getRight();
+    }
+    evalExp = cont;
+    return false;
 }
 
 Data Interpreter::evalProcedure(Exp* args, Exp* body, Env& env) {

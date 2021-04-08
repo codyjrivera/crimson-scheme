@@ -49,6 +49,8 @@ class Interpreter {
     Exp* evalBegin(Exp* exp, Env& env);
     Data evalQuote(Exp* exp, Env& env);
     Data evalLambda(Exp* exp, Env& env);
+    bool evalAnd(Exp* exp, Env& env, Exp*& evalExp, Data& result);
+    bool evalOr(Exp* exp, Env& env, Exp*& evalExp, Data& result);
     Data evalProcedure(Exp* args, Exp* body, Env& env);
     // TODO -- Add Apply when needed
     std::string dataToString(Data& result);

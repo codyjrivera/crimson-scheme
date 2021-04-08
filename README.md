@@ -36,9 +36,14 @@ Example 1. Euclid's Algorithm
 (newline)
 ```
 
+<<<<<<< HEAD
 Example 2. Don Knuth's ["man or boy"](https://en.wikipedia.org/wiki/Man_or_boy_test)
 test of recursion and scoping.
 ```
+=======
+Example 2. Traditional [Man or Boy](https://en.wikipedia.org/wiki/Man_or_boy_test) Test
+```scheme
+>>>>>>> 33482d97491584ac924265b7b41c2e82a201636c
 ; Tests proper lexical scoping and recursion
 (define (A k x1 x2 x3 x4 x5)
   (define (B)

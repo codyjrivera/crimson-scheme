@@ -24,7 +24,7 @@
 
    Phase 2:
    cons, car, cdr, set-car!, set-cdr!,
-   error, read
+   error, read, eof-object?
 
  */
 

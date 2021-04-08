@@ -52,6 +52,8 @@ std::string Data::toString() const {
         case DataType::NIL:
             return std::string("()");
             break;
+        case DataType::END_OF_FILE:
+            return std::string("<EOF>");
         default:
             return "Unspecified";
     }

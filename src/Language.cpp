@@ -10,6 +10,7 @@
 #include "Interpreter.hpp"
 #include "Lexer.hpp"
 #include "Pair.hpp"
+#include "Parser.hpp"
 #include "Token.hpp"
 
 /* Language Primitive Procedures
@@ -23,10 +24,7 @@
 
    Phase 2:
    cons, car, cdr, set-car!, set-cdr!,
-   error
-
-   TODO:
-   read
+   error, read
 
  */
 
@@ -615,6 +613,52 @@ void primError(Data& result, std::vector<Data>& args,
     throw InterpreterError(message);
 }
 
+// To implement read, basically parse an exp and evalQuote it.
+void primRead(Data& result, std::vector<Data>& args,
+                 Interpreter& interpreter) {
+    if (args.size() == 0) {
+        Parser parser;
+        Lexer lexer(*(interpreter.input));
+        Exp* exp, quoteExp;
+        try {
+            exp = parser.parseExp(lexer);
+            result = interpreter.evalQuote(exp, interpreter.topEnv);
+        } catch (InterpreterError& e) {
+            if (exp != NULL) {
+                exp->cleanup();
+                delete exp;
+            }
+            if (lexer.peek().getType() == TokenType::END) {
+                result = Data::EndOfFile();
+                return;
+            } else {
+                // rethrow
+                throw e;
+            }
+        }
+        if (exp != NULL) {
+            exp->cleanup();
+            delete exp;
+        }
+    } else if (args.size() == 1) {
+        throw InterpreterError(
+            "Primitive Procedure read: Ports not implemented");
+    } else {
+        throw InterpreterError("Primitive Procedure read: maximum arity 1");
+    }
+}
+
+void primEOFObject(Data& result, std::vector<Data>& args, Interpreter& interpreter) {
+    (void)interpreter;
+
+    if (args.size() != 1) {
+        throw InterpreterError(
+            "Primitive Procedure eof-object?: Requires one argument");
+    } else {
+        result = args[0].type == DataType::END_OF_FILE;
+    }
+}
+
 void Interpreter::initInterpreter() {
     // Deposits primitive procedures
     topEnv.insert("+", Data::PrimProcedure("+", primAdd));
@@ -637,6 +681,8 @@ void Interpreter::initInterpreter() {
     topEnv.insert("set-car!", Data::PrimProcedure("set-car!", primSetCar));
     topEnv.insert("set-cdr!", Data::PrimProcedure("set-cdr!", primSetCdr));
     topEnv.insert("error", Data::PrimProcedure("error", primError));
+    topEnv.insert("read", Data::PrimProcedure("read", primRead));
+    topEnv.insert("eof-object?", Data::PrimProcedure("eof-object?", primEOFObject));
 
     // Sets up GC
     heap.setRoot(topEnv);

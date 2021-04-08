@@ -24,6 +24,7 @@ enum class DataType {
     PRIM_PROCEDURE,
     UNDEFINED,
     NIL,
+    END_OF_FILE,
 
     // Compound Data
     PAIR,
@@ -71,6 +72,7 @@ struct Data {
         return Data(name, p);
     }
     static Data Nil() { return Data(DataType::NIL, "()"); }
+    static Data EndOfFile() { return Data(DataType::END_OF_FILE, "<EOF>"); }
     static Data Pair(HeapObject* pair) { return Data(DataType::PAIR, pair); }
     static Data Procedure(HeapObject* proc) {
         return Data(DataType::PROCEDURE, proc);
